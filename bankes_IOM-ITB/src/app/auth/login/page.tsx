@@ -1,41 +1,51 @@
 'use client'
-import { useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import Link from 'next/link';
-import { signIn } from "next-auth/react";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation"
-import { useEffect } from "react";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation"
 import { Toaster } from "sonner";
 
-export default function LoginPage() {
+// Pesan untuk kode error NextAuth (?error=...) setelah redirect dari Keycloak
+const SSO_ERROR_MESSAGES: Record<string, string> = {
+    OAuthSignin: "Tidak dapat menghubungi server SSO IOM-ITB. Silakan coba lagi.",
+    OAuthCallback: "Login SSO gagal diproses. Silakan coba lagi.",
+    OAuthAccountNotLinked: "Email ini sudah terhubung dengan metode login lain. Hubungi admin.",
+    Callback: "Terjadi kesalahan saat memproses akun Anda. Hubungi admin.",
+    AccessDenied: "Akses ditolak.",
+    Configuration: "Konfigurasi SSO pada server belum lengkap. Hubungi admin.",
+    SessionRequired: "Silakan login terlebih dahulu.",
+};
+
+function LoginContent() {
     const router = useRouter()
-    const { data: session } = useSession();
+    const searchParams = useSearchParams()
+    const { status } = useSession();
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
+    // Tampilkan error dari NextAuth (mis. /auth/login?error=OAuthCallback)
     useEffect(() => {
-        if (!session?.user?.id || !session?.user?.role) return;
-        const roleBasedCallbackUrls: { [key: string]: string } = {
-            Mahasiswa: "/student/profile",
-            Admin: "/admin/account/",
-            Pengurus_IOM: "/iom/document/",
-            Guest: "/guest/",
-            Pewawancara: "/interviewer/interview/",
-            OrangTuaAsuh: "/guest/",
-        };
-        const callbackUrl = roleBasedCallbackUrls[session.user.role as string];
-        if (callbackUrl) router.push(callbackUrl);
-    }, [session, router])
+        const code = searchParams.get("error")
+        if (code) {
+            setError(SSO_ERROR_MESSAGES[code] ?? "Login gagal. Silakan coba lagi.")
+        }
+    }, [searchParams])
+
+    // Sudah login: serahkan ke halaman utama yang mengarahkan sesuai role
+    useEffect(() => {
+        if (status === "authenticated") router.replace("/")
+    }, [status, router])
 
     const handleSSOLogin = async () => {
         try {
             setIsLoading(true)
             setError(null)
+            // signIn melakukan redirect penuh ke Keycloak; halaman "/" yang
+            // mengarahkan user ke dashboard sesuai role setelah kembali.
             await signIn("keycloak", { callbackUrl: "/" })
         } catch (err) {
             setError("Gagal melakukan login. Silakan coba lagi.")
             console.error("SSO login error:", err)
-        } finally {
             setIsLoading(false)
         }
     }
@@ -50,7 +60,7 @@ export default function LoginPage() {
 
                 <div className="text-center font-normal mb-6">
                     <span className="text-sm mr-1">
-                        Belum punya akun? 
+                        Belum punya akun?
                     </span>
                     <Link href="/auth/register" className="text-sm text-var font-bold hover:underline">
                         Daftar
@@ -58,7 +68,7 @@ export default function LoginPage() {
                 </div>
 
                 {error && (
-                    <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+                    <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4 text-sm">
                         {error}
                     </div>
                 )}
@@ -67,27 +77,26 @@ export default function LoginPage() {
                     <button
                         type="button"
                         onClick={handleSSOLogin}
-                        disabled={isLoading}
-                        className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded transition duration-200"
+                        disabled={isLoading || status === "loading"}
+                        className="w-full bg-var hover:bg-var/90 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded transition duration-200"
                     >
-                        {isLoading ? "Memproses..." : "Login dengan SSO IOM-ITB"}
+                        {isLoading ? "Mengalihkan ke SSO..." : "Login dengan SSO IOM-ITB"}
                     </button>
 
-                    <div className="relative">
-                        <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-gray-300"></div>
-                        </div>
-                        <div className="relative flex justify-center text-sm">
-                            <span className="px-2 bg-white text-gray-500">atau</span>
-                        </div>
-                    </div>
-
                     <div className="text-center text-sm text-gray-600">
-                        <p>Menggunakan SSO IOM-ITB (Keycloak)</p>
-                        <p className="text-xs mt-2">Hubungi admin jika mengalami masalah login</p>
+                        <p>Gunakan akun SSO IOM-ITB yang sama untuk Bankes dan OTA.</p>
+                        <p className="text-xs mt-2">Hubungi admin jika mengalami masalah login.</p>
                     </div>
                 </div>
             </div>
         </div>
+    )
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={null}>
+            <LoginContent />
+        </Suspense>
     )
 }

@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
+import { redirectToKeycloakLogin } from "@/lib/keycloak";
 import { UserRegisRequestSchema } from "@/lib/zod/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -24,18 +25,6 @@ interface RegisterFormProps {
   role: string;
   setRole: (role: string) => void;
   setIsClicked: (isClicked: boolean) => void;
-}
-
-function getKeycloakLoginUrl(): string {
-  const KEYCLOAK_AUTH_URL =
-    "https://iom-sso.kirisame.jp.net/realms/iom-itb-sso/protocol/openid-connect/auth";
-  const params = new URLSearchParams({
-    client_id: import.meta.env.VITE_KEYCLOAK_CLIENT_ID,
-    redirect_uri: import.meta.env.VITE_KEYCLOAK_REDIRECT_URI,
-    response_type: "code",
-    scope: "openid email profile",
-  });
-  return `${KEYCLOAK_AUTH_URL}?${params.toString()}`;
 }
 
 export default function RegisterForm({
@@ -204,12 +193,10 @@ export default function RegisterForm({
                 <Button
                   type="button"
                   disabled={form.formState.isSubmitting}
-                  asChild
                   variant={"outline"}
+                  onClick={redirectToKeycloakLogin}
                 >
-                  <a href={getKeycloakLoginUrl()}>
-                    Login dengan SSO IOM-ITB
-                  </a>
+                  Login dengan SSO IOM-ITB
                 </Button>
               </>
             )}

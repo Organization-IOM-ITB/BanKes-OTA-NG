@@ -7,7 +7,9 @@ export default function LoginPage() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace("/auth/login")
+    // NextAuth mengarahkan error SSO ke /login?error=...; teruskan query string
+    // agar halaman /auth/login bisa menampilkan pesannya.
+    router.replace(`/auth/login${window.location.search}`)
   }, [router])
 
   return (

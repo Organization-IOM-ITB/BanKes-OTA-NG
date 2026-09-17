@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
+import { redirectToKeycloakLogin } from "@/lib/keycloak";
 import { UserLoginRequestSchema } from "@/lib/zod/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -34,25 +35,18 @@ export const Route = createFileRoute("/_app/auth/login/")({
 
 type UserLoginFormValues = z.infer<typeof UserLoginRequestSchema>;
 
-function getKeycloakLoginUrl(): string {
-  const KEYCLOAK_AUTH_URL =
-    "https://iom-sso.kirisame.jp.net/realms/iom-itb-sso/protocol/openid-connect/auth";
-  const params = new URLSearchParams({
-    client_id: import.meta.env.VITE_KEYCLOAK_CLIENT_ID,
-    redirect_uri: import.meta.env.VITE_KEYCLOAK_REDIRECT_URI,
-    response_type: "code",
-    scope: "openid email profile",
-  });
-  return `${KEYCLOAK_AUTH_URL}?${params.toString()}`;
-}
-
 function RouteComponent() {
   const navigate = useNavigate();
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get("sso") === "keycloak") {
-      window.location.href = getKeycloakLoginUrl();
+      redirectToKeycloakLogin();
+      return;
+    }
+    const ssoError = params.get("sso_error");
+    if (ssoError) {
+      toast.error("Login SSO gagal", { description: ssoError });
     }
   }, []);
   const loginCallbackMutation = useMutation({
@@ -108,7 +102,13 @@ function RouteComponent() {
         <h2 className="text-primary text-center text-lg sm:text-2xl md:text-[26px]">
           Masuk ke akun Anda
         </h2>
-        <section className="w-full md:w-[400px]">
+        <section className="flex w-full flex-col gap-5 md:w-[400px]">
+          <Button type="button" onClick={redirectToKeycloakLogin}>
+            Login dengan SSO IOM-ITB
+          </Button>
+          <p className="text-primary text-center text-sm">
+            atau masuk dengan akun lama (email/No. WA dan kata sandi)
+          </p>
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
@@ -162,20 +162,12 @@ function RouteComponent() {
                 Lupa kata sandi?
               </Link>
 
-              <Button type="submit" disabled={form.formState.isSubmitting}>
-                Masuk
-              </Button>
-
-              <p className="text-primary text-center">atau</p>
               <Button
-                type="button"
-                disabled={form.formState.isSubmitting}
-                asChild
+                type="submit"
                 variant={"outline"}
+                disabled={form.formState.isSubmitting}
               >
-                <a href={getKeycloakLoginUrl()}>
-                  Login dengan SSO IOM-ITB
-                </a>
+                Masuk
               </Button>
 
               <p className="text-primary text-center text-base">

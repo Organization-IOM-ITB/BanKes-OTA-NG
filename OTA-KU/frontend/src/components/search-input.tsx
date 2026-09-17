@@ -19,7 +19,7 @@ export function SearchInput({
       <Search className="text-muted-foreground absolute top-1/2 left-2.5 h-4 w-4 -translate-y-1/2" />
       <Input
         type="search"
-        className={cn("border border-[#BBBAB8] pl-9", className)}
+        className={cn("border border-placeholder pl-9", className)}
         placeholder={placeholder ?? "Search..."}
         onChange={(e) => {
           if (setSearch) {

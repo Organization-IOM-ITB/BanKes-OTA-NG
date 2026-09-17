@@ -41,7 +41,7 @@ function RouteComponent() {
         </h1>
       )}
       <Tabs defaultValue="mahasiswa" className="flex w-full flex-col gap-4">
-        <TabsList className="w-full bg-[#BBBAB8]">
+        <TabsList className="w-full bg-placeholder">
           <TabsTrigger
             value="mahasiswa"
             className="data-[state=active]:text-dark text-base font-bold text-white data-[state=active]:bg-white"

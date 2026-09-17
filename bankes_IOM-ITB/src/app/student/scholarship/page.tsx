@@ -192,7 +192,7 @@ export default function Upload() {
         <div className="w-full"> {/* Replaces the Card component */}
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20 space-y-4">
-              <svg className="animate-spin h-10 w-10 text-[#003793]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <svg className="animate-spin h-10 w-10 text-main" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
@@ -218,7 +218,7 @@ export default function Upload() {
                           <ScholarshipStatusBadge period={p} />
                         ) : p.is_open ? (
                           <button
-                            className="w-full sm:w-auto flex items-center justify-center bg-[#003793] hover:bg-[#002a70] text-white font-semibold py-2 px-5 rounded-md shadow-sm hover:shadow transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#003793] focus:ring-opacity-50 text-sm"
+                            className="w-full sm:w-auto flex items-center justify-center bg-main hover:bg-maindark text-white font-semibold py-2 px-5 rounded-md shadow-sm hover:shadow transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-main focus:ring-opacity-50 text-sm"
                             onClick={() => handleRegister(p.period_id)}
                           >
                             Daftar Beasiswa

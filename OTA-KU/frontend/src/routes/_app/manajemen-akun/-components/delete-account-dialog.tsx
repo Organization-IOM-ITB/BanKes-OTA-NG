@@ -58,7 +58,7 @@ function DeleteAccountDialog({
   return (
     <DialogContent className="flex max-h-8/12 flex-col sm:max-w-2xl">
       <DialogHeader>
-        <DialogTitle className="text-2xl font-bold text-[#003A6E]">
+        <DialogTitle className="text-2xl font-bold text-dark">
           Hapus Akun
         </DialogTitle>
       </DialogHeader>

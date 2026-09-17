@@ -189,7 +189,7 @@ export default function PeriodPage() {
                                 disabled={loading}
                                 className={`${
                                   loading ? "opacity-50 cursor-not-allowed" : ""
-                                } bg-[#003793] text-white px-2 py-1 rounded-md hover:bg-[#b5c3e1]`}
+                                } bg-main text-white px-2 py-1 rounded-md hover:bg-[#b5c3e1]`}
                               >
                                 Buat Periode Sekarang
                               </button>
@@ -204,7 +204,7 @@ export default function PeriodPage() {
                                 disabled={loading}
                                 className={`${
                                   loading ? "opacity-50 cursor-not-allowed" : ""
-                                } bg-[#003793] text-white px-2 py-1 rounded-md hover:bg-[#b5c3e1]`}
+                                } bg-main text-white px-2 py-1 rounded-md hover:bg-[#b5c3e1]`}
                               >
                                 {p.is_open ? "Tutup Pendaftaran" : "Buka Pendaftaran"}
                               </button>
@@ -272,7 +272,7 @@ export default function PeriodPage() {
                     disabled={loading}
                     className={`${
                       loading ? "opacity-50 cursor-not-allowed" : ""
-                    } bg-[#003793] text-white px-4 py-2 rounded-md hover:bg-[#b5c3e1]`}
+                    } bg-main text-white px-4 py-2 rounded-md hover:bg-[#b5c3e1]`}
                   >
                     Buat Periode
                   </button>

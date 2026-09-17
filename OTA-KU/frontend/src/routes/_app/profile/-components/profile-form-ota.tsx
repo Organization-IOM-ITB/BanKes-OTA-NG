@@ -170,7 +170,7 @@ const ProfileFormOTA: React.FC<ProfileFormProps> = ({ session }) => {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <Tabs defaultValue="personalInfo" className="w-full">
-            <TabsList className="w-full bg-[#BBBAB8]">
+            <TabsList className="w-full bg-placeholder">
               <TabsTrigger
                 value="personalInfo"
                 className="data-[state=active]:text-dark text-base font-bold text-white data-[state=active]:bg-white"

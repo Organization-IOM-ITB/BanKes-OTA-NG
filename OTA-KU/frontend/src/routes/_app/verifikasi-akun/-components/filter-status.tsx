@@ -80,8 +80,8 @@ function FilterStatus({ type, status, setStatus }: FilterStatusProps) {
           role="combobox"
           aria-expanded={open}
           className={cn(
-            "hover:bg-accent focus-visible:ring-ring data-[state=open]:bg-accent data-[state=open]:text-accent-foreground hover:text-accent-foreground justify-between rounded-md border border-[#BBBAB8] bg-white text-[#BBBAB8] shadow-xs focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
-            value ? "text-accent-foreground" : "text-[#BBBAB8]",
+            "hover:bg-accent focus-visible:ring-ring data-[state=open]:bg-accent data-[state=open]:text-accent-foreground hover:text-accent-foreground justify-between rounded-md border border-placeholder bg-white text-placeholder shadow-xs focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+            value ? "text-accent-foreground" : "text-placeholder",
           )}
         >
           {value

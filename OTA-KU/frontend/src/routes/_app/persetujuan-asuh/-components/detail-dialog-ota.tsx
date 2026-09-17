@@ -33,7 +33,7 @@ function DetailDialogOta({ id }: { id: string }) {
       </DialogTrigger>
       <DialogContent className="flex max-h-8/12 flex-col sm:max-w-xl">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-[#003A6E]">
+          <DialogTitle className="text-2xl font-bold text-dark">
             Detail Orang Tua Asuh
           </DialogTitle>
         </DialogHeader>
@@ -41,11 +41,11 @@ function DetailDialogOta({ id }: { id: string }) {
         <div className="flex flex-1 flex-col overflow-y-scroll">
           {Object.entries(otaColumns).map(([key, value]) => (
             <div
-              className="grid grid-cols-1 gap-2 border-b border-b-[#BBBAB8] py-2 sm:grid-cols-2"
+              className="grid grid-cols-1 gap-2 border-b border-b-placeholder py-2 sm:grid-cols-2"
               key={key}
             >
               <p className="font-bold">{value}</p>
-              <p className="line-clamp-1 text-[#003A6E] sm:line-clamp-none">
+              <p className="line-clamp-1 text-dark sm:line-clamp-none">
                 {formatValue(
                   key,
                   data?.body[key as keyof typeof data.body] ?? "-"

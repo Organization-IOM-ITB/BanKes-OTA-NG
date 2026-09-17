@@ -91,12 +91,12 @@ function RouteComponent() {
   return (
     <main className="flex min-h-[calc(100vh-70px)] flex-col p-2 px-6 py-8 md:px-12 lg:min-h-[calc(100vh-96px)]">
       <Metadata title="Mahasiswa Asuh Saya | BOTA" />
-      <h1 className="mb-6 text-3xl font-bold text-[#003087]">
+      <h1 className="mb-6 text-3xl font-bold text-primary">
         Mahasiswa Asuh Saya
       </h1>
 
       <Tabs defaultValue="aktif" className="flex w-full flex-col gap-4">
-        <TabsList className="w-full bg-[#BBBAB8]">
+        <TabsList className="w-full bg-placeholder">
           <TabsTrigger
             value="aktif"
             className="data-[state=active]:text-dark text-base font-bold text-white data-[state=active]:bg-white"

@@ -38,7 +38,7 @@ services:
 
   # ── MinIO Object Storage ─────────────────────────────────────────────────────
   minio:
-    image: minio/minio
+    image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
     container_name: iom-ota-minio-prod
     ports:
       - "${MINIO_API_PORT:-19000}:9000"
@@ -71,7 +71,7 @@ services:
 
   # ── MinIO bucket init ────────────────────────────────────────────────────────
   minio-init:
-    image: minio/mc
+    image: quay.io/minio/mc:RELEASE.2025-08-13T08-35-41Z
     container_name: iom-ota-minio-init-prod
     depends_on:
       minio:

@@ -3,11 +3,12 @@
 
 const STATE_KEY = "ota-ku.keycloak-state";
 
+const DEFAULT_ISSUER = "https://sso-ng.iom-itb.id/realms/iom-itb-sso";
+
 function issuerUrl(): string {
-  const issuer = import.meta.env.VITE_KEYCLOAK_ISSUER_URL as string | undefined;
-  if (!issuer) {
-    throw new Error("VITE_KEYCLOAK_ISSUER_URL belum dikonfigurasi");
-  }
+  const issuer =
+    (import.meta.env.VITE_KEYCLOAK_ISSUER_URL as string | undefined) ||
+    DEFAULT_ISSUER;
   return issuer.replace(/\/$/, "");
 }
 

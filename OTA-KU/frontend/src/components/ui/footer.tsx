@@ -24,7 +24,7 @@ const kontakLinks = [
 
 export default function Footer() {
   return (
-    <footer className="w-full bg-[#F2F7FC] py-10 text-[#003A6E]">
+    <footer className="w-full bg-bg-footer py-10 text-dark">
       <div className="mx-auto px-6 md:px-12 lg:px-24">
         <div className="flex flex-col gap-8 md:flex-row md:flex-wrap md:gap-0">
           <div className="w-full md:w-1/2 md:pr-10 lg:w-5/12">

@@ -179,7 +179,7 @@ export function CollapsibleDataTable({ data }: CollapsibleDataTableProps) {
               {headerGroup.headers.map((header) => (
                 <TableHead
                   key={header.id}
-                  className="py-4 text-sm text-[#BBBAB8]"
+                  className="py-4 text-sm text-placeholder"
                 >
                   {header.isPlaceholder
                     ? null

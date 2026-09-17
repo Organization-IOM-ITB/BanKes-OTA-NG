@@ -33,7 +33,7 @@ function DetailDialogMahasiswa({ id }: { id: string }) {
       </DialogTrigger>
       <DialogContent className="flex max-h-8/12 flex-col sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-[#003A6E]">
+          <DialogTitle className="text-2xl font-bold text-dark">
             Detail Mahasiswa
           </DialogTitle>
         </DialogHeader>
@@ -41,7 +41,7 @@ function DetailDialogMahasiswa({ id }: { id: string }) {
         <div className="flex flex-1 flex-col overflow-y-scroll">
           {Object.entries(mahasiswaColumns).map(([key, value]) => (
             <div
-              className="grid grid-cols-1 gap-2 border-b border-b-[#BBBAB8] py-2 sm:grid-cols-2"
+              className="grid grid-cols-1 gap-2 border-b border-b-placeholder py-2 sm:grid-cols-2"
               key={key}
             >
               <p className="font-bold">{value}</p>
@@ -64,7 +64,7 @@ function DetailDialogMahasiswa({ id }: { id: string }) {
                   </a>
                 </Button>
               ) : (
-                <p className="line-clamp-1 text-[#003A6E] sm:line-clamp-none">
+                <p className="line-clamp-1 text-dark sm:line-clamp-none">
                   {formatValue(
                     key,
                     data?.body[key as keyof typeof data.body] ?? "-"

@@ -123,7 +123,7 @@ export function ViewReceiptDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-3xl max-h-[70vh] flex flex-col">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-[#0A2463]">
+          <DialogTitle className="text-xl font-bold text-dark">
             Bukti Pembayaran
           </DialogTitle>
           <DialogDescription>

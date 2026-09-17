@@ -99,7 +99,7 @@ function DaftarMahasiswa({ session }: { session: UserSchema }): JSX.Element {
         <Button
           variant="outline"
           className={cn(
-            "hover:bg-accent focus-visible:ring-ring data-[state=open]:bg-accent data-[state=open]:text-accent-foreground hover:text-accent-foreground text-accent-foreground justify-between rounded-md border border-[#BBBAB8] bg-white shadow-xs focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+            "hover:bg-accent focus-visible:ring-ring data-[state=open]:bg-accent data-[state=open]:text-accent-foreground hover:text-accent-foreground text-accent-foreground justify-between rounded-md border border-placeholder bg-white shadow-xs focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
           )}
           onClick={() => setShowFilters(!showFilters)}
         >

@@ -94,7 +94,7 @@ function SetGroupPeriodDialog({
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-[#003A6E]">
+          <DialogTitle className="text-xl font-bold text-dark">
             Atur Periode Hubungan Asuh Grup
           </DialogTitle>
           <p className="text-muted-foreground text-sm">

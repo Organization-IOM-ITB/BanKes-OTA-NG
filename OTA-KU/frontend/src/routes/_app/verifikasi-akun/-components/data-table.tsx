@@ -55,7 +55,7 @@ export function DataTable<TData, TValue>({
                 return (
                   <TableHead
                     key={header.id}
-                    className="py-4 text-sm text-[#BBBAB8]"
+                    className="py-4 text-sm text-placeholder"
                   >
                     {header.isPlaceholder
                       ? null

@@ -24,7 +24,7 @@ const kontakLinks = [
 
 const Footer: React.FC = () => {
 	return (
-		<footer className="bg-[#F2F7FC] text-[#003A6E] py-10">
+		<footer className="bg-lightmain text-footertext py-10">
 			<div className="mx-auto px-6 sm:px-16 md:px-24 lg:px-40">
 				<div className="flex flex-col md:flex-row md:flex-wrap gap-8 md:gap-0">
 					<div className="w-full md:w-1/2 lg:w-5/12 md:pr-10">

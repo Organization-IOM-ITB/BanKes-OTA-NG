@@ -88,7 +88,7 @@ export default function ScoringQuestionDialog() {
     <>
       <Toaster position="bottom-right" richColors />
 
-      <Button variant="default" className="bg-[#003793]" onClick={handleOpenDialog}>
+      <Button variant="default" className="bg-main" onClick={handleOpenDialog}>
         Edit Pertanyaan
       </Button>
 
@@ -112,7 +112,7 @@ export default function ScoringQuestionDialog() {
               <Button
                 type="button"
                 variant="default"
-                className="self-start mt-1 bg-[#003793] text-white"
+                className="self-start mt-1 bg-main text-white"
                 onClick={handleAddQuestion}
                 disabled={isLoading}
               >

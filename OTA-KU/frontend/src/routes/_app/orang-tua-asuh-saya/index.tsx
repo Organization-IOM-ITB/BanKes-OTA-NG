@@ -101,7 +101,7 @@ function RouteComponent() {
 
           {(isGrupLoading || hasGrup) && (
             <div className="flex flex-col gap-3">
-              <h2 className="text-lg font-bold text-[#003087]">Grup OTA</h2>
+              <h2 className="text-lg font-bold text-primary">Grup OTA</h2>
               {isGrupLoading ? (
                 <Skeleton className="h-16 w-full" />
               ) : (

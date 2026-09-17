@@ -439,7 +439,7 @@ export default function Form() {
                                     tabIndex={0}
                                     onClick={() => handleStudentClick(student)}
                                     className={`cursor-pointer ${
-                                      isSelected ? "bg-[#003793]" : "bg-white hover:bg-gray-100"
+                                      isSelected ? "bg-main" : "bg-white hover:bg-gray-100"
                                     }`}
                                   >
                                     <td className="px-2 py-4 text-sm text-gray-900">
@@ -490,7 +490,7 @@ export default function Form() {
                                   onClick={() => setCurrentPage(page)}
                                   className={`px-2 py-2 text-sm rounded ${
                                     currentPage === page
-                                      ? "bg-[#003793] text-white"
+                                      ? "bg-main text-white"
                                       : "border-2 hover:bg-gray-200 text-gray-700"
                                   }`}
                                 >

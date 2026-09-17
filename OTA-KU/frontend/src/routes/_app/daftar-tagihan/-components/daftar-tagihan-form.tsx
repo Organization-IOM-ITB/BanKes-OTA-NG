@@ -169,7 +169,7 @@ function DaftarTagihanForm({ row }: DaftarTagihanFormProps) {
 
   return (
     <div className="bg-gray-50 px-6 py-4">
-      <h4 className="mb-4 text-sm font-semibold tracking-wide text-[#BBBAB8]">
+      <h4 className="mb-4 text-sm font-semibold tracking-wide text-placeholder">
         Detail Transaksi Mahasiswa
       </h4>
       <div className="space-y-3">
@@ -188,7 +188,7 @@ function DaftarTagihanForm({ row }: DaftarTagihanFormProps) {
                     NIM: {transaction.nim_ma}
                   </Badge>
                 </div>
-                <div className="text-sm text-[#BBBAB8]">
+                <div className="text-sm text-placeholder">
                   ID: {transaction.mahasiswa_id}
                 </div>
               </div>
@@ -202,12 +202,12 @@ function DaftarTagihanForm({ row }: DaftarTagihanFormProps) {
 
             <div className="grid grid-cols-1 gap-4 text-sm md:grid-cols-3">
               <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-[#BBBAB8]" />
+                <Calendar className="h-4 w-4 text-placeholder" />
                 <div>
                   <div className="text-dark font-medium">
                     Tenggat Pembayaran
                   </div>
-                  <div className="text-[#BBBAB8]">
+                  <div className="text-placeholder">
                     {formatDate(transaction.dueDate)}
                   </div>
                 </div>
@@ -215,12 +215,12 @@ function DaftarTagihanForm({ row }: DaftarTagihanFormProps) {
 
               {transaction.paidAt && (
                 <div className="flex items-center gap-2">
-                  <DollarSign className="h-4 w-4 text-[#BBBAB8]" />
+                  <DollarSign className="h-4 w-4 text-placeholder" />
                   <div>
                     <div className="text-dark font-medium">
                       Tanggal Pembayaran
                     </div>
-                    <div className="text-[#BBBAB8]">
+                    <div className="text-placeholder">
                       {formatDate(transaction.paidAt)}
                     </div>
                   </div>
@@ -229,7 +229,7 @@ function DaftarTagihanForm({ row }: DaftarTagihanFormProps) {
 
               {transaction.receipt && (
                 <div className="flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-[#BBBAB8]" />
+                  <FileText className="h-4 w-4 text-placeholder" />
                   <div>
                     <div className="text-dark font-medium">
                       Bukti Pembayaran

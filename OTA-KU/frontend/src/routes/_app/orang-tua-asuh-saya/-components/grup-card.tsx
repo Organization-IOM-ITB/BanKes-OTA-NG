@@ -11,8 +11,8 @@ function GrupCard({ grup }: GrupCardProps) {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center gap-2">
-        <Users className="h-4 w-4 text-[#003087]" />
-        <span className="font-semibold text-[#003087]">{grup.groupName}</span>
+        <Users className="h-4 w-4 text-primary" />
+        <span className="font-semibold text-primary">{grup.groupName}</span>
         <span
           className={`rounded-full px-2 py-0.5 text-xs font-medium ${
             grup.groupStatus === "active"

@@ -16,10 +16,10 @@ export function NotFound() {
           <Metadata title="Halaman Tidak Ditemukan | BOTA" />
 
           <div className="mx-auto flex h-full max-w-md flex-col items-center px-4 text-center">
-            <h1 className="text-5xl font-bold tracking-tighter text-[#003399]">
+            <h1 className="text-5xl font-bold tracking-tighter text-primary">
               404
             </h1>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-[#003399]">
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-primary">
               Halaman Tidak Ditemukan
             </h2>
             <p className="mt-4 mb-6 text-gray-600 md:text-xl/relaxed">
@@ -27,7 +27,7 @@ export function NotFound() {
               mungkin telah dipindahkan atau dihapus.
             </p>
             <Link to="/">
-              <Button className="bg-[#003399] text-white hover:bg-[#002277]">
+              <Button className="bg-primary text-white hover:bg-primary-hover">
                 <Home className="mr-2 h-4 w-4" />
                 Kembali ke Beranda
               </Button>

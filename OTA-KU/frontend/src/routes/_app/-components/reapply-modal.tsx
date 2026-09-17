@@ -42,7 +42,7 @@ export default function ReapplyModal({ session }: ReapplyModalProps) {
     <Dialog open={showReapplyModal} onOpenChange={setShowReapplyModal}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-center text-xl font-bold text-[#0A2463]">
+          <DialogTitle className="text-center text-xl font-bold text-dark">
             Masa bantuan akan segera berakhir!
           </DialogTitle>
         </DialogHeader>

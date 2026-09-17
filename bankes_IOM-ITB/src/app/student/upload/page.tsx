@@ -153,7 +153,7 @@ export default function Upload() {
         <div className="w-full bg-white rounded-xl shadow-lg p-6 md:p-8"> {/* Content container with subtle shadow and padding */}
           {loadingFileTypes ? (
             <div className="flex flex-col items-center justify-center py-10">
-              <svg className="animate-spin h-8 w-8 text-[#003793] mb-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <svg className="animate-spin h-8 w-8 text-main mb-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
@@ -189,7 +189,7 @@ export default function Upload() {
                       <div className="w-full md:flex-1">
                         <label
                           htmlFor={`file-upload-${type.key}`}
-                          className="relative flex items-center w-full p-3.5 border border-gray-300 rounded-lg text-sm bg-gray-50 hover:border-gray-400 focus-within:border-[#003793] focus-within:ring-1 focus-within:ring-[#003793] cursor-pointer transition-colors group"
+                          className="relative flex items-center w-full p-3.5 border border-gray-300 rounded-lg text-sm bg-gray-50 hover:border-gray-400 focus-within:border-main focus-within:ring-1 focus-within:ring-main cursor-pointer transition-colors group"
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-3 text-gray-400 group-hover:text-gray-500 flex-shrink-0">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
@@ -197,7 +197,7 @@ export default function Upload() {
                           <span className="truncate flex-grow text-gray-700 group-hover:text-gray-800">
                             {selectedFile ? selectedFile.file.name : `Pilih berkas ${type.title.toLowerCase()} (.pdf, .jpg, .png)`}
                           </span>
-                          <span className="ml-3 pl-3 text-xs font-semibold uppercase text-[#003793] group-hover:text-[#002a70] border-l border-gray-200 group-hover:border-gray-300 whitespace-nowrap">
+                          <span className="ml-3 pl-3 text-xs font-semibold uppercase text-main group-hover:text-maindark border-l border-gray-200 group-hover:border-gray-300 whitespace-nowrap">
                             {selectedFile ? "Ganti Berkas" : "Pilih Berkas"}
                           </span>
                           <input
@@ -253,7 +253,7 @@ export default function Upload() {
                   <button
                     onClick={handleUpload}
                     disabled={selectedFiles.length === 0}
-                    className="bg-[#003793] text-white font-semibold px-6 py-2.5 rounded-lg hover:bg-[#002a70] transition-colors duration-150 disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#003793] focus:ring-offset-2"
+                    className="bg-main text-white font-semibold px-6 py-2.5 rounded-lg hover:bg-maindark transition-colors duration-150 disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-main focus:ring-offset-2"
                   >
                     Simpan Perubahan
                   </button>

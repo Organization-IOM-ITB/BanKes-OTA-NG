@@ -689,10 +689,14 @@ authRouter.openapi(forgotPasswordRoute, async (c) => {
       },
     });
 
+    // Brevo SMTP relay - Gmail Workspace menolak App Password untuk akun ini
+    // (535 5.7.8 Bad Credentials), dan opsi App Password tidak tersedia di
+    // Admin Console organisasi. EMAIL/EMAIL_PASSWORD sekarang diisi login
+    // & SMTP key dari dashboard Brevo, bukan kredensial Gmail.
     const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      secure: true,
-      port: 465,
+      host: "smtp-relay.brevo.com",
+      secure: false,
+      port: 587,
       auth: {
         user: env.EMAIL,
         pass: env.EMAIL_PASSWORD,

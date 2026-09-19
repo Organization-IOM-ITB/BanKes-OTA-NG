@@ -53,22 +53,33 @@ export default function AccountPage() {
     setLoadingId(userId);
     try {
       const selectedRole = roleMap[userId];
-      const response = await fetch(`/api/users/${userId}`, {
-        method: "PATCH",
+      // Guest users (pending, no Keycloak account yet) must go through the
+      // approval endpoint — it's the one that actually creates their Keycloak
+      // account with the chosen role. /api/users/[id] refuses Guest users on
+      // purpose and points here instead.
+      const response = await fetch(`/api/admin/users/approve`, {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ role: selectedRole }),
+        body: JSON.stringify({ userId, role: selectedRole }),
       });
 
-      if (!response.ok) {
-        const err = await response.json();
-        alert(`Gagal: ${err.error || err.message}`);
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        alert(`Gagal: ${result.error || result.message}`);
         return;
+      }
+
+      if (result.temporaryPassword) {
+        // TODO: kirim otomatis ke user (email/WA) alih-alih ditampilkan ke admin.
+        alert(
+          `User ${result.user?.email} berhasil disetujui.\n\nPassword sementara: ${result.temporaryPassword}\n\nSampaikan ke user secara manual — belum ada pengiriman otomatis.`
+        );
       }
 
       fetchUsers();
     } catch (error) {
-      console.error("Error accepting user:", error);
-    } finally {
+      console.error("Error accepting user:", error);    } finally {
       setLoadingId(null);
     }
   };

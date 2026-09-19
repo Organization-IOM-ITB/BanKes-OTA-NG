@@ -23,6 +23,9 @@ export const UserRegisRequestSchema = z
     phoneNumber: PhoneNumberSchema,
     password: PasswordSchema,
     confirmPassword: PasswordSchema,
+    otpChannel: z.enum(["email", "whatsapp"], {
+      message: "Metode verifikasi tidak valid",
+    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Kata sandi tidak cocok",

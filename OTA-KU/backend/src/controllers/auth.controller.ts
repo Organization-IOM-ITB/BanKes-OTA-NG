@@ -12,7 +12,7 @@ import {
   getNimFakultasFromNimJurusanMap,
   getNimJurusanCodeMap,
 } from "../lib/nim.js";
-import { generateOTP } from "../lib/otp.js";
+import { generateOTP, sendOtpEmail } from "../lib/otp.js";
 import { generateSecurePassword } from "../lib/password.js";
 import {
   forgotPasswordRoute,
@@ -206,7 +206,7 @@ authRouter.openapi(regisRoute, async (c) => {
   const data = Object.fromEntries(body.entries());
 
   const zodParseResult = UserRegisRequestSchema.parse(data);
-  const { email, phoneNumber, password, type } = zodParseResult;
+  const { email, phoneNumber, password, type, otpChannel } = zodParseResult;
 
   // Check for existing account
   const existingAccount = await prisma.user.findFirst({
@@ -270,21 +270,29 @@ authRouter.openapi(regisRoute, async (c) => {
       return [newUser, code];
     });
 
-    // 4. Send OTP via WhatsApp
-    const message =
-      `Berikut adalah kode OTP Anda\n${code}\n` +
-      `Gunakan kode ini untuk verifikasi akun Anda. Berlaku 15 menit.\n\n` +
-      `Jika Anda tidak melakukan registrasi, abaikan pesan ini.`;
+    // 4. Send OTP via channel dipilih user saat registrasi (default: email)
+    if (otpChannel === "whatsapp") {
+      const message =
+        `Berikut adalah kode OTP Anda\n${code}\n` +
+        `Gunakan kode ini untuk verifikasi akun Anda. Berlaku 15 menit.\n\n` +
+        `Jika Anda tidak melakukan registrasi, abaikan pesan ini.`;
 
-    try {
-      await sendWhatsApp({
-        to: phoneNumber,
-        message,
-        clientReference: `otp-register-${newUser.id}`,
-        idempotencyKey: `otp-register-${newUser.id}-${code}`,
-      });
-    } catch (err) {
-      console.error(`[whatsapp] Failed to send OTP to ${phoneNumber}:`, err);
+      try {
+        await sendWhatsApp({
+          to: phoneNumber,
+          message,
+          clientReference: `otp-register-${newUser.id}`,
+          idempotencyKey: `otp-register-${newUser.id}-${code}`,
+        });
+      } catch (err) {
+        console.error(`[whatsapp] Failed to send OTP to ${phoneNumber}:`, err);
+      }
+    } else {
+      try {
+        await sendOtpEmail(email, code);
+      } catch (err) {
+        console.error(`[email] Failed to send OTP to ${email}:`, err);
+      }
     }
 
     // 5. Issue unverified JWT

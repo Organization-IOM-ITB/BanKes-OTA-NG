@@ -10,6 +10,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { redirectToKeycloakLogin } from "@/lib/keycloak";
 import { UserRegisRequestSchema } from "@/lib/zod/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -36,10 +43,23 @@ export default function RegisterForm({
   const registerCallbackMutation = useMutation({
     mutationFn: (data: UserRegisterFormValues) =>
       api.auth.regis({ formData: data }),
-    onSuccess: (_data, _variables, context) => {
+    onSuccess: (_data, variables, context) => {
       toast.dismiss(context);
+      // Dipakai halaman /auth/otp-verification untuk menampilkan pesan &
+      // kontak yang sesuai dengan channel yang dipilih di sini. Disimpan
+      // di sessionStorage (bukan di server) supaya tidak perlu migrasi DB
+      // hanya untuk menyimpan preferensi tampilan sesaat ini.
+      try {
+        sessionStorage.setItem("otpChannel", variables.otpChannel);
+      } catch {
+        // sessionStorage tidak tersedia (mis. private mode) - abaikan,
+        // halaman OTP akan fallback ke pesan default.
+      }
       toast.success("Berhasil melakukan registrasi", {
-        description: "Silakan cek whatsapp Anda untuk verifikasi",
+        description:
+          variables.otpChannel === "whatsapp"
+            ? "Silakan cek WhatsApp Anda untuk verifikasi"
+            : "Silakan cek email Anda untuk verifikasi",
       });
 
       queryClient.invalidateQueries({ queryKey: ["verify"] });
@@ -67,6 +87,7 @@ export default function RegisterForm({
     resolver: zodResolver(UserRegisRequestSchema),
     defaultValues: {
       type: role as "mahasiswa" | "ota",
+      otpChannel: "email",
     },
   });
 
@@ -127,6 +148,30 @@ export default function RegisterForm({
                       inputMode="tel"
                       {...field} />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="otpChannel"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-primary text-sm">
+                    Kirim kode verifikasi via
+                  </FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Pilih metode verifikasi" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="email">Email</SelectItem>
+                      <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

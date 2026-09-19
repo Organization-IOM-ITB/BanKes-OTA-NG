@@ -70,6 +70,15 @@ export const UserRegisRequestSchema = z
     phoneNumber: PhoneNumberSchema,
     password: PasswordSchema,
     confirmPassword: PasswordSchema,
+    otpChannel: z
+      .enum(["email", "whatsapp"], {
+        message: "Metode verifikasi tidak valid",
+      })
+      .default("email")
+      .openapi({
+        example: "email",
+        description: "Channel used to deliver the registration OTP.",
+      }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Konfirmasi password gagal",

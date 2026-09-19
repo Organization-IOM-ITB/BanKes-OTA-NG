@@ -58,6 +58,13 @@ type OTPVerificationFormValues = z.infer<typeof OTPVerificationRequestSchema>;
 function RouteComponent() {
   const { session } = Route.useLoaderData();
   const navigate = useNavigate();
+  // Diisi register-form.tsx via sessionStorage saat submit registrasi.
+  // Default ke "email" (channel default verifikasi) kalau tidak ada -
+  // mis. user reload halaman ini langsung tanpa lewat alur registrasi.
+  const otpChannel: "email" | "whatsapp" =
+    (typeof window !== "undefined" &&
+      (sessionStorage.getItem("otpChannel") as "email" | "whatsapp" | null)) ||
+    "email";
   const otpCallbackMutation = useMutation({
     mutationFn: (data: OTPVerificationFormValues) =>
       api.auth.otp({ formData: data }),
@@ -94,7 +101,8 @@ function RouteComponent() {
     onSuccess: (_data, _variables, context) => {
       toast.dismiss(context);
       toast.success("Berhasil mengirim ulang OTP", {
-        description: "Silakan cek whatsapp Anda",
+        description:
+          otpChannel === "whatsapp" ? "Silakan cek WhatsApp Anda" : "Silakan cek email Anda",
       });
     },
     onError: (error, _variables, context) => {
@@ -133,7 +141,7 @@ function RouteComponent() {
       return;
     }
 
-    const formData = { email: session?.email };
+    const formData = { email: session?.email, otpChannel };
     otpResendCallbackMutation.mutate(formData);
   };
 
@@ -148,15 +156,21 @@ function RouteComponent() {
           <h1 className="text-3xl font-bold md:text-4xl xl:text-5xl">
             Verifikasi Kode OTP
           </h1>
-          <p className="my-6 text-xl md:text-2xl xl:text-3xl">Cek WhatsApp Anda</p>
+          <p className="my-6 text-xl md:text-2xl xl:text-3xl">
+            {otpChannel === "whatsapp" ? "Cek WhatsApp Anda" : "Cek Email Anda"}
+          </p>
         </div>
 
         <div className="text-center text-sm md:text-base xl:text-lg">
           <div className="mb-6">
             <p className="">
-              Kami telah mengirimkan kode 6 digit ke WhatsApp Anda:
+              {otpChannel === "whatsapp"
+                ? "Kami telah mengirimkan kode 6 digit ke WhatsApp Anda:"
+                : "Kami telah mengirimkan kode 6 digit ke email Anda:"}
             </p>
-            <p className="mt-1 font-medium">{session?.phoneNumber}</p>
+            <p className="mt-1 font-medium">
+              {otpChannel === "whatsapp" ? session?.phoneNumber : session?.email}
+            </p>
             <p className="mt-1">
               Silahkan masukkan kode tersebut untuk melanjutkan
             </p>

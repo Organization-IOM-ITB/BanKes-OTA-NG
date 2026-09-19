@@ -7,5 +7,9 @@ export type SendOtpRequestSchema = {
    * The user's email.
    */
   email: string;
+  /**
+   * Channel used to deliver the OTP.
+   */
+  otpChannel: 'email' | 'whatsapp';
 };
 

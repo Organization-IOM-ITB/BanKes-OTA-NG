@@ -25,5 +25,9 @@ export type UserRegisRequestSchema = {
    * Simbol yang diperbolehkan: ! @ # $ % ^ & * ( ) _ - + = [ ] { } ; ' : " \ | , . < > / ?
    */
   confirmPassword: string;
+  /**
+   * Channel used to deliver the registration OTP.
+   */
+  otpChannel: 'email' | 'whatsapp';
 };
 

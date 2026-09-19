@@ -6,6 +6,15 @@ import { EmailSchema } from "./atomic.js";
 export const SendOtpRequestSchema = z
   .object({
     email: EmailSchema,
+    otpChannel: z
+      .enum(["email", "whatsapp"], {
+        message: "Metode verifikasi tidak valid",
+      })
+      .default("email")
+      .openapi({
+        example: "email",
+        description: "Channel used to deliver the OTP.",
+      }),
   })
   .openapi("SendOtpRequestSchema");
 

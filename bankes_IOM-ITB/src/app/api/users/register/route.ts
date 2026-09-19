@@ -6,7 +6,6 @@ import {
   
 } from "@/utils/_validation";
 
-import { createSsoAccount } from "@/lib/sso";
 import { prisma } from "@/lib/prisma";
 
 type Errors = {
@@ -155,39 +154,19 @@ export async function POST(req: Request) {
       return NextResponse.json(errors, { status: 400 });
     }
 
-    // Register ke Keycloak dengan role "mahasiswa" sebagai default saat register
-    // Admin akan update role setelah approve
-    const nameParts = name.trim().split(" ");
-    const firstName = nameParts[0] ?? "";
-    const lastName = nameParts.slice(1).join(" ") || undefined;
-
-    let keycloakUserId: string;
-    try {
-      const ssoResult = await createSsoAccount({
-        email: normalizedEmail,
-        password,
-        role: "mahasiswa", // default role untuk register, admin akan update saat approve
-        firstName,
-        lastName,
-      });
-      keycloakUserId = ssoResult.userId;
-    } catch (ssoError) {
-      console.error("SSO registration failed:", ssoError);
-      return NextResponse.json(
-        { general: [`Gagal mendaftarkan akun SSO: ${(ssoError as Error).message}`] },
-        { status: 500 }
-      );
-    }
-
-    // Simpan user lokal dengan oid dari Keycloak
+    // NOTE: Akun Keycloak SENGAJA belum dibuat di sini. Selama user masih
+    // berstatus Guest/pending, dia tidak boleh punya role apa pun di realm SSO
+    // bersama — app lain (OTA-KU, moki-ng, dst.) langsung mempercayai role
+    // Keycloak tanpa tahu soal status approval Bankes. Akun Keycloak baru
+    // dibuat saat admin approve (lihat /api/admin/users/approve), dengan role
+    // final yang sudah admin tentukan.
     const newUser = await prisma.user.create({
       data: {
         name,
         email: normalizedEmail,
         password: hashedPassword,
         role: "Guest",
-        provider: "keycloak",
-        oid: keycloakUserId,
+        provider: "credentials",
       }
     });
 

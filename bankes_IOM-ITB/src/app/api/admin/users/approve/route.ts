@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { createSsoAccount } from "@/lib/sso";
+import { createSsoAccount, generateTemporaryPassword } from "@/lib/sso";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 
@@ -72,10 +72,19 @@ export async function POST(req: Request) {
 
     console.log(`[Admin Approve] Creating Keycloak account for ${user.email} with role ${role}`);
 
+    // user.password is a bcrypt hash of the password the user picked at
+    // registration — it must never be forwarded to Keycloak as a real
+    // credential (the user could never log in with it). Generate a fresh
+    // temporary password for the Keycloak account instead.
+    // TODO: deliver `temporaryPassword` to the user (email/WhatsApp) and force
+    // a password change on first login. For now it is returned to the admin
+    // caller so it can be relayed manually.
+    const temporaryPassword = generateTemporaryPassword();
+
     // Create Keycloak account with the assigned role
     const ssoUser = await createSsoAccount({
       email: user.email,
-      password: user.password || Math.random().toString(36).slice(-12),
+      password: temporaryPassword,
       role: roleToKeycloak(role),
       firstName: user.name?.split(" ")[0] || user.name,
       lastName: user.name?.split(" ").slice(1).join(" ") || ""
@@ -106,7 +115,8 @@ export async function POST(req: Request) {
         role: updatedUser.role,
         oid: updatedUser.oid,
         provider: updatedUser.provider
-      }
+      },
+      temporaryPassword
     }, { status: 200 });
 
   } catch (error) {

@@ -224,7 +224,7 @@ export const dailyReminder7DaysCron = new CronJob(
     const dueTransactions = await prisma.transaction.findMany({
       where: {
         dueDate: { gte: target, lt: targetEnd },
-        Connection: { paidFor: 0 },
+        paidFor: 0,
       },
       include: { OtaProfile: { include: { User: true } } },
     });
@@ -374,7 +374,7 @@ export const dailyReminderCron = new CronJob(
     const dueTransactions = await prisma.transaction.findMany({
       where: {
         dueDate: { gte: target, lt: targetEnd },
-        Connection: { paidFor: 0 },
+        paidFor: 0,
       },
       include: { OtaProfile: { include: { User: true } } },
     });

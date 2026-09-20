@@ -16,14 +16,10 @@ export function generateOTP(): string {
 // (dan perilaku "kirim ke TEST_EMAIL di non-production") konsisten di satu
 // tempat alih-alih diduplikasi di tiap controller seperti email lain di file ini.
 export async function sendOtpEmail(to: string, code: string): Promise<void> {
-  // Brevo SMTP relay - Gmail Workspace menolak App Password untuk akun ini
-  // (535 5.7.8 Bad Credentials), dan opsi App Password tidak tersedia di
-  // Admin Console organisasi. EMAIL/EMAIL_PASSWORD sekarang diisi login
-  // & SMTP key dari dashboard Brevo, bukan kredensial Gmail.
   const transporter = nodemailer.createTransport({
-    host: "smtp-relay.brevo.com",
-    secure: false,
-    port: 587,
+    host: "smtp.gmail.com",
+    secure: true,
+    port: 465,
     auth: {
       user: env.EMAIL,
       pass: env.EMAIL_PASSWORD,

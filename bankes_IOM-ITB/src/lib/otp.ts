@@ -1,4 +1,4 @@
-import nodemailer from "nodemailer";
+import { sendMail } from "./mailer";
 
 export const OTP_TTL_MS = 1000 * 60 * 15;
 
@@ -35,18 +35,7 @@ const otpEmailHtml = (email: string, code: string) => `
 </div>`;
 
 export async function sendOtpEmail(to: string, code: string): Promise<void> {
-  const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    secure: true,
-    port: 465,
-    auth: {
-      user: process.env.EMAIL,
-      pass: process.env.EMAIL_PASSWORD,
-    },
-  });
-
-  await transporter.sendMail({
-    from: process.env.EMAIL_FROM || process.env.EMAIL,
+  await sendMail({
     to,
     subject: "Kode Verifikasi Pendaftaran BanKes - IOM ITB",
     html: otpEmailHtml(to, code),

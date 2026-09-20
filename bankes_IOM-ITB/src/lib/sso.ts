@@ -20,12 +20,19 @@ export async function createSsoAccount({
   role,
   firstName,
   lastName,
+  enabled = true,
 }: {
   email: string;
   password: string;
   role: string;
   firstName?: string;
   lastName?: string;
+  /**
+   * Set false untuk membuat akun yang belum bisa dipakai login.
+   * Dipakai saat registrasi Bankes: akun dibuat dengan password pilihan user,
+   * tapi baru diaktifkan setelah admin approve.
+   */
+  enabled?: boolean;
 }): Promise<{ userId: string; email: string; role: string }> {
   const ssoApiUrl = process.env.SSO_API_URL;
   const registerApiKey = process.env.REGISTER_API_KEY;
@@ -36,7 +43,7 @@ export async function createSsoAccount({
     );
   }
 
-  const body: Record<string, string> = { email, password, role };
+  const body: Record<string, string | boolean> = { email, password, role, enabled };
   if (firstName) body.firstName = firstName;
   if (lastName) body.lastName = lastName;
 
@@ -61,32 +68,38 @@ export async function createSsoAccount({
 }
 
 /**
- * Membuat temporary password untuk user baru
- * Password yang dihasilkan harus dikomunikasikan ke user melalui email
+ * Mengaktifkan akun Keycloak yang dibuat nonaktif saat registrasi.
+ * Dipanggil saat admin approve, bersamaan dengan penetapan role final.
  */
-export function generateTemporaryPassword(length: number = 12): string {
-  const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  const lowercase = "abcdefghijklmnopqrstuvwxyz";
-  const numbers = "0123456789";
-  const symbols = "!@#$%^&*";
+export async function enableSsoAccount({
+  keycloakUserId,
+}: {
+  keycloakUserId: string;
+}): Promise<void> {
+  const ssoApiUrl = process.env.SSO_API_URL;
+  const registerApiKey = process.env.REGISTER_API_KEY;
 
-  const all = uppercase + lowercase + numbers + symbols;
-
-  let password = "";
-  password += uppercase.charAt(Math.floor(Math.random() * uppercase.length));
-  password += lowercase.charAt(Math.floor(Math.random() * lowercase.length));
-  password += numbers.charAt(Math.floor(Math.random() * numbers.length));
-  password += symbols.charAt(Math.floor(Math.random() * symbols.length));
-
-  for (let i = 4; i < length; i++) {
-    password += all.charAt(Math.floor(Math.random() * all.length));
+  if (!ssoApiUrl || !registerApiKey) {
+    throw new Error(
+      "SSO_API_URL or REGISTER_API_KEY environment variables are not set"
+    );
   }
 
-  // Shuffle password
-  return password
-    .split("")
-    .sort(() => Math.random() - 0.5)
-    .join("");
+  const res = await fetch(`${ssoApiUrl}/auth/users/${keycloakUserId}/enabled`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Api-Key": registerApiKey,
+    },
+    body: JSON.stringify({ enabled: true }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(
+      err.message ?? `Failed to enable SSO account (status ${res.status})`
+    );
+  }
 }
 
 /**

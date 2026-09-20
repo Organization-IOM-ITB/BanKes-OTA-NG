@@ -8,6 +8,11 @@ import {
 
 import { prisma } from "@/lib/prisma";
 import { generateOTP, sendOtpEmail, OTP_TTL_MS } from "@/lib/otp";
+import { createSsoAccount, deleteSsoAccount } from "@/lib/sso";
+
+// Role sementara selama akun masih menunggu approval. Akunnya nonaktif, jadi
+// role ini belum memberi akses apa pun; admin menggantinya saat approve.
+const DEFAULT_PENDING_KEYCLOAK_ROLE = "volunteer-pewawancara";
 
 type Errors = {
   name?: string
@@ -155,21 +160,51 @@ export async function POST(req: Request) {
       return NextResponse.json(errors, { status: 400 });
     }
 
-    // NOTE: Akun Keycloak SENGAJA belum dibuat di sini. Selama user masih
-    // berstatus Guest/pending, dia tidak boleh punya role apa pun di realm SSO
-    // bersama — app lain (OTA-KU, moki-ng, dst.) langsung mempercayai role
-    // Keycloak tanpa tahu soal status approval Bankes. Akun Keycloak baru
-    // dibuat saat admin approve (lihat /api/admin/users/approve), dengan role
-    // final yang sudah admin tentukan.
-    const newUser = await prisma.user.create({
-      data: {
-        name,
+    // Akun Keycloak dibuat di sini — satu-satunya titik di mana password
+    // plaintext pilihan user masih tersedia — tapi dalam keadaan NONAKTIF.
+    // Akun nonaktif tidak bisa dipakai login ke aplikasi mana pun, jadi user
+    // belum memperoleh akses apa pun sebelum admin approve. Saat approve,
+    // role diganti ke role final lalu akunnya diaktifkan.
+    const nameParts = name.trim().split(" ");
+    let keycloakUserId: string;
+    try {
+      const ssoResult = await createSsoAccount({
         email: normalizedEmail,
-        password: hashedPassword,
-        role: "Guest",
-        provider: "credentials",
-      }
-    });
+        password,
+        role: DEFAULT_PENDING_KEYCLOAK_ROLE,
+        firstName: nameParts[0] ?? "",
+        lastName: nameParts.slice(1).join(" ") || undefined,
+        enabled: false,
+      });
+      keycloakUserId = ssoResult.userId;
+    } catch (ssoError) {
+      console.error("[SSO] Gagal membuat akun:", ssoError);
+      return NextResponse.json(
+        { general: [`Gagal mendaftarkan akun SSO: ${(ssoError as Error).message}`] },
+        { status: 500 }
+      );
+    }
+
+    let newUser;
+    try {
+      newUser = await prisma.user.create({
+        data: {
+          name,
+          email: normalizedEmail,
+          password: hashedPassword,
+          role: "Guest",
+          provider: "keycloak",
+          oid: keycloakUserId,
+        }
+      });
+    } catch (dbError) {
+      // Jangan tinggalkan akun Keycloak yatim kalau penyimpanan lokal gagal —
+      // email-nya akan terkunci dan user tidak bisa mendaftar ulang.
+      await deleteSsoAccount({ keycloakUserId }).catch((cleanupError) =>
+        console.error("[SSO] Gagal membersihkan akun setelah kegagalan DB:", cleanupError)
+      );
+      throw dbError;
+    }
 
     if (!newUser) {
       errors.general = ["Failed to create user"];

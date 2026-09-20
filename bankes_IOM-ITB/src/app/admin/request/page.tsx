@@ -70,12 +70,9 @@ export default function AccountPage() {
         return;
       }
 
-      if (result.temporaryPassword) {
-        // TODO: kirim otomatis ke user (email/WA) alih-alih ditampilkan ke admin.
-        alert(
-          `User ${result.user?.email} berhasil disetujui.\n\nPassword sementara: ${result.temporaryPassword}\n\nSampaikan ke user secara manual — belum ada pengiriman otomatis.`
-        );
-      }
+      alert(
+        `User ${result.user?.email} berhasil disetujui.\n\nAkun SSO-nya sudah aktif dan notifikasi sudah dikirim ke emailnya. User login memakai kata sandi yang dibuat saat mendaftar.`
+      );
 
       fetchUsers();
     } catch (error) {

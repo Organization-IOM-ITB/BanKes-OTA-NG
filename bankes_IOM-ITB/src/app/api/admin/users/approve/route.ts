@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { createSsoAccount, generateTemporaryPassword } from "@/lib/sso";
+import { updateSsoRole, enableSsoAccount } from "@/lib/sso";
+import { sendMail } from "@/lib/mailer";
+import { registrasiAktifEmail } from "@/lib/email/registrasi-aktif";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 
@@ -72,51 +74,59 @@ export async function POST(req: Request) {
       );
     }
 
-    if (user.oid) {
+    if (!user.oid) {
       return NextResponse.json(
-        { error: "User already has Keycloak account - already approved" },
+        { error: "User tidak punya akun SSO. Akun lama sebelum fitur ini perlu didaftarkan ulang." },
         { status: 400 }
       );
     }
 
-    console.log(`[Admin Approve] Creating Keycloak account for ${user.email} with role ${role}`);
+    console.log(`[Admin Approve] Setting role ${role} and enabling account for ${user.email}`);
 
-    // user.password is a bcrypt hash of the password the user picked at
-    // registration — it must never be forwarded to Keycloak as a real
-    // credential (the user could never log in with it). Generate a fresh
-    // temporary password for the Keycloak account instead.
-    // TODO: deliver `temporaryPassword` to the user (email/WhatsApp) and force
-    // a password change on first login. For now it is returned to the admin
-    // caller so it can be relayed manually.
-    const temporaryPassword = generateTemporaryPassword();
-
-    // Create Keycloak account with the assigned role
-    const ssoUser = await createSsoAccount({
-      email: user.email,
-      password: temporaryPassword,
+    // Akun Keycloak sudah dibuat saat registrasi dengan password pilihan user,
+    // dalam keadaan nonaktif. Approval tinggal menetapkan role final lalu
+    // mengaktifkannya — tidak ada temporary password yang perlu dibagikan.
+    await updateSsoRole({
+      keycloakUserId: user.oid,
       role: roleToKeycloak(role),
-      firstName: user.name?.split(" ")[0] || user.name,
-      lastName: user.name?.split(" ").slice(1).join(" ") || ""
     });
 
-    console.log(`[Admin Approve] Keycloak account created with oid: ${ssoUser.userId}`);
+    await enableSsoAccount({ keycloakUserId: user.oid });
 
-    // Update local user with Keycloak info and new role
+    console.log(`[Admin Approve] Keycloak account ${user.oid} enabled with role ${role}`);
+
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: {
-        oid: ssoUser.userId,
-        provider: "keycloak" as any,
         role: role as any,
-        verificationStatus: "verified" as any
       }
     });
 
     console.log(`[Admin Approve] Local user updated with role ${role}`);
 
+    // Notifikasi ke user bahwa akunnya sudah aktif. Kegagalan kirim email
+    // tidak boleh membatalkan approval yang sudah terjadi di Keycloak.
+    try {
+      const loginUrl = process.env.NEXTAUTH_URL
+        ? `${process.env.NEXTAUTH_URL.replace(/\/+$/, "")}/auth/login`
+        : "https://bankes.iom-itb.id/auth/login";
+
+      await sendMail({
+        to: updatedUser.email,
+        subject: "Pendaftaran Akun Bankes Telah Terverifikasi",
+        html: registrasiAktifEmail({
+          nama: updatedUser.name,
+          role: String(updatedUser.role),
+          loginUrl,
+        }),
+      });
+    } catch (mailError) {
+      console.error(`[email] Gagal mengirim notifikasi aktivasi ke ${updatedUser.email}:`, mailError);
+    }
+
     return NextResponse.json({
       success: true,
-      message: `User ${user.email} berhasil disetujui sebagai ${role} dan Keycloak account telah dibuat. User sekarang bisa login via SSO.`,
+      message: `User ${user.email} berhasil disetujui sebagai ${role}. Akun SSO-nya sudah aktif dan user bisa login dengan kata sandi yang dibuat saat mendaftar.`,
       user: {
         id: updatedUser.id,
         email: updatedUser.email,
@@ -124,8 +134,7 @@ export async function POST(req: Request) {
         role: updatedUser.role,
         oid: updatedUser.oid,
         provider: updatedUser.provider
-      },
-      temporaryPassword
+      }
     }, { status: 200 });
 
   } catch (error) {

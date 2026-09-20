@@ -55,6 +55,15 @@ export async function POST(req: Request) {
       );
     }
 
+    // Email harus sudah diverifikasi lewat OTP sebelum admin bisa approve —
+    // tanpa guard ini langkah verifikasi email jadi tidak ada artinya.
+    if (user.verificationStatus !== "verified") {
+      return NextResponse.json(
+        { error: "User belum memverifikasi email. Minta user menyelesaikan verifikasi OTP terlebih dahulu." },
+        { status: 400 }
+      );
+    }
+
     // Check user is still Guest and doesn't have Keycloak account
     if (user.role !== "Guest") {
       return NextResponse.json(

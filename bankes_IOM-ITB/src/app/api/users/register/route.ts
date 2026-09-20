@@ -7,6 +7,7 @@ import {
 } from "@/utils/_validation";
 
 import { prisma } from "@/lib/prisma";
+import { generateOTP, sendOtpEmail, OTP_TTL_MS } from "@/lib/otp";
 
 type Errors = {
   name?: string
@@ -175,15 +176,35 @@ export async function POST(req: Request) {
       return NextResponse.json(errors, { status: 400 });
     }
 
+    // Verifikasi email lewat OTP. Admin baru bisa approve setelah email
+    // terverifikasi (lihat guard di /api/admin/users/approve), jadi OTP ini
+    // syarat tambahan — bukan pengganti — persetujuan admin.
+    const code = generateOTP();
+    await prisma.oTP.create({
+      data: {
+        userId: newUser.id,
+        code,
+        expiredAt: new Date(Date.now() + OTP_TTL_MS),
+      },
+    });
+
+    try {
+      await sendOtpEmail(normalizedEmail, code);
+    } catch (mailError) {
+      // Akun sudah terlanjur dibuat; jangan gagalkan registrasi hanya karena
+      // email tidak terkirim — user bisa memakai tombol kirim ulang.
+      console.error(`[email] Gagal mengirim OTP ke ${normalizedEmail}:`, mailError);
+    }
+
     return NextResponse.json({
       success: true,
-      message: "Akun berhasil dibuat. Silahkan tunggu persetujuan admin sebelum dapat login.",
+      message: "Akun berhasil dibuat. Kode verifikasi telah dikirim ke email Anda.",
       user: {
         id: newUser.id,
         email: normalizedEmail,
         name,
         role: "Guest",
-        status: "Menunggu persetujuan admin"
+        status: "Menunggu verifikasi email"
       }
     }, { status: 201 });
 

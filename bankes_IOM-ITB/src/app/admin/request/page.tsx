@@ -97,6 +97,7 @@ export default function AccountPage() {
               <tr className="border-b">
                 <th className="py-2">Nama</th>
                 <th className="py-2">Email</th>
+                <th className="py-2">Verifikasi</th>
                 <th className="py-2">Role</th>
                 <th className="py-2">Aksi</th>
               </tr>
@@ -104,7 +105,7 @@ export default function AccountPage() {
             <tbody>
               {users.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="py-4 text-center text-gray-500">
+                  <td colSpan={5} className="py-4 text-center text-gray-500">
                     Tidak ada akun yang menunggu persetujuan
                   </td>
                 </tr>
@@ -113,6 +114,17 @@ export default function AccountPage() {
                 <tr key={user.id} className="border-b">
                   <td className="py-2">{user.name}</td>
                   <td className="py-2">{user.email}</td>
+                  <td className="py-2">
+                    {user.verificationStatus === "verified" ? (
+                      <span className="inline-block rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-700">
+                        Terverifikasi
+                      </span>
+                    ) : (
+                      <span className="inline-block rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-semibold text-yellow-700">
+                        Belum verifikasi
+                      </span>
+                    )}
+                  </td>
                   <td className="py-2">
                     <select
                       value={roleMap[user.id]}
@@ -132,7 +144,12 @@ export default function AccountPage() {
                     <button
                       className="bg-green-500 text-white px-3 py-1 rounded disabled:opacity-50"
                       onClick={() => handleAccept(user.id)}
-                      disabled={loadingId === user.id}
+                      disabled={loadingId === user.id || user.verificationStatus !== "verified"}
+                      title={
+                        user.verificationStatus !== "verified"
+                          ? "User belum memverifikasi email"
+                          : undefined
+                      }
                     >{loadingId === user.id ? "Memproses..." : "Terima"}</button>
                   </td>
                 </tr>

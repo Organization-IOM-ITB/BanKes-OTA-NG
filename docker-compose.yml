@@ -120,6 +120,10 @@ services:
       AZURE_AD_TENANT_ID: ${AZURE_AD_TENANT_ID:-}
       # Cross-app navigation
       NEXT_PUBLIC_OTA_URL: ${NEXT_PUBLIC_OTA_URL:-http://localhost:5173}
+      # SMTP untuk OTP verifikasi email saat pendaftaran
+      EMAIL: ${EMAIL:-}
+      EMAIL_FROM: ${EMAIL_FROM:-}
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD:-}
     # Regenerate Prisma client at startup so the node_modules volume never has a stale client.
     # Migration is handled by the separate `migrate` service.
     command: sh -c "npx prisma generate && npm run dev -- -p 3031"

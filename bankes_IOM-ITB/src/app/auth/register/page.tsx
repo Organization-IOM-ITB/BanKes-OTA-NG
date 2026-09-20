@@ -95,8 +95,8 @@ export default function RegisterPage() {
          * Handle successful registration
          */
         if (response.ok) {
-          const data = await response.json()
-          router.push("/auth/login")
+          await response.json()
+          router.push(`/auth/verify-otp?email=${encodeURIComponent(formData.email.toLowerCase())}`)
           return
         }
 

@@ -12,6 +12,7 @@ export type User = {
   email: string;
   password: string;
   role: Role;
+  verificationStatus?: "verified" | "unverified";
 }
 
 export type Profile = {

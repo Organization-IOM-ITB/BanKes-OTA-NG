@@ -1,5 +1,6 @@
-/* Tipografi mengikuti iom-itb-admin-NG */
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Google+Sans+Flex:opsz,wght@6..144,1..1000&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Manrope:wght@200..800&display=swap');
+/* Tipografi & palet mengikuti iom-tokens.css (sumber kebenaran bersama) */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+@import "./iom-tokens.css";
 @import "tailwindcss";
 
 @plugin "tailwindcss-animate";
@@ -7,47 +8,52 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Palet & bentuk mengikuti iom-itb-admin-NG (biru IOM + netral slate) */
-  --dark: #003A6E;
-  --primary: #003793;
-  --primary-hover: #002B73;
-  --secondary: #1D4ED8;
-  --accent-iom: #EA8389;
-  --bg-footer: #F2F7FC;
-  --placeholder: #94A3B8;
-  --bg-main: #F8FAFC;
-  --destructive: #EF4444;
-  --succeed: #0F9D58;
-  --background: #F8FAFC;
-  --foreground: #0F172A;
-  --iom-control-border: rgb(140 140 148);
-  --card: #FFFFFF;
-  --card-foreground: #0F172A;
-  --popover: #FFFFFF;
-  --popover-foreground: #0F172A;
-  --primary-foreground: #FFFFFF;
-  --muted: #F1F5F9;
-  --muted-foreground: #64748B;
-  --accent: #F1F5F9;
-  --accent-foreground: #0F172A;
-  --destructive-foreground: #FFFFFF;
-  --border: #E2E8F0;
-  --input: rgb(140 140 148);
-  --ring: #003793;
+  /* Semua nilai di bawah diturunkan dari iom-tokens.css. Nama var lama
+     dipertahankan supaya 182 komponen tidak perlu disentuh. */
+  --dark: var(--iom-primary-deep);
+  --primary: var(--iom-primary);
+  --primary-hover: var(--iom-primary-hover);
+  /* shadcn memakai `secondary` sebagai netral (badge/button varian
+     secondary), bukan warna brand. Sebelumnya #1D4ED8 dan
+     --secondary-foreground tidak pernah didefinisikan sama sekali,
+     jadi badge secondary tidak punya warna teks. Disamakan dengan bankes. */
+  --secondary: var(--iom-surface-muted);
+  --secondary-foreground: var(--iom-fg);
+  --accent-iom: var(--iom-accent);
+  --bg-footer: var(--iom-surface-subtle);
+  --placeholder: var(--iom-placeholder);
+  --bg-main: var(--iom-bg);
+  --destructive: var(--iom-danger);
+  --succeed: var(--iom-success);
+  --background: var(--iom-bg);
+  --foreground: var(--iom-fg);
+  --card: var(--iom-surface);
+  --card-foreground: var(--iom-fg);
+  --popover: var(--iom-surface);
+  --popover-foreground: var(--iom-fg);
+  --primary-foreground: var(--iom-surface);
+  --muted: var(--iom-surface-muted);
+  --muted-foreground: var(--iom-muted-fg);
+  --accent: var(--iom-surface-muted);
+  --accent-foreground: var(--iom-fg);
+  --destructive-foreground: var(--iom-surface);
+  --border: var(--iom-border);
+  --input: var(--iom-control-border);
+  --ring: var(--iom-primary);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 0.5rem;
-  --sidebar: #F8FAFC;
-  --sidebar-foreground: #0F172A;
-  --sidebar-primary: #003793;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #F1F5F9;
-  --sidebar-accent-foreground: #0F172A;
-  --sidebar-border: #E2E8F0;
-  --sidebar-ring: #003793;
+  --radius: var(--iom-radius);
+  --sidebar: var(--iom-bg);
+  --sidebar-foreground: var(--iom-fg);
+  --sidebar-primary: var(--iom-primary);
+  --sidebar-primary-foreground: var(--iom-surface);
+  --sidebar-accent: var(--iom-surface-muted);
+  --sidebar-accent-foreground: var(--iom-fg);
+  --sidebar-border: var(--iom-border);
+  --sidebar-ring: var(--iom-primary);
 }
 
 .dark {
@@ -57,8 +63,12 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.145 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
+  /* Sebelumnya oklch(0.985 0 0) — sisa default shadcn yang membuat biru
+     IOM hilang sama sekali di dark mode. Brand dipertahankan, dicerahkan
+     secukupnya agar kontras di latar gelap. */
+  --primary: #4C7DD9;
+  --primary-hover: #6B95E5;
+  --primary-foreground: #0B1220;
   --muted: oklch(0.269 0 0);
   --muted-foreground: oklch(0.708 0 0);
   --accent: oklch(0.269 0 0);
@@ -90,6 +100,7 @@
   --color-accent-iom: var(--accent-iom);
   --color-iom-control-border: var(--iom-control-border);
   --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
   --color-bg-footer: var(--bg-footer);
   --color-placeholder: var(--placeholder);
   --color-bg-main: var(--bg-main);
@@ -128,8 +139,8 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  --font-sans: "Manrope", "Geist", "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-heading: "Google Sans Flex", "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--iom-font-sans);
+  --font-heading: var(--iom-font-heading);
 }
 
 @layer base {
@@ -141,20 +152,20 @@
     font-family: var(--font-sans);
   }
 
-  /* Tipografi & kontrol form mengikuti iom-itb-admin-NG */
+  /* Skala heading identik dengan admin-NG & app-NG (DM Sans) */
   h1 {
     font-family: var(--font-heading);
-    font-weight: 540;
-    font-variation-settings: 'opsz' 36, 'wght' 540;
-    letter-spacing: 0.014em;
+    font-weight: 600;
+    font-variation-settings: 'opsz' 40, 'wght' 600;
+    letter-spacing: -0.011em;
   }
 
   h2,
   h3 {
     font-family: var(--font-heading);
-    font-weight: 520;
-    font-variation-settings: 'opsz' 32, 'wght' 520;
-    letter-spacing: 0.014em;
+    font-weight: 600;
+    font-variation-settings: 'opsz' 32, 'wght' 600;
+    letter-spacing: -0.008em;
   }
 
   select {
@@ -185,11 +196,11 @@ input[type='text'],
 input[type='url'],
 select,
 textarea {
-  background-color: #ffffff;
+  background-color: var(--iom-surface);
   border-color: var(--iom-control-border);
   border-style: solid;
   border-width: 1px;
-  border-radius: 8px;
+  border-radius: var(--iom-radius);
 }
 
 .iom-control-border:focus,
@@ -205,5 +216,5 @@ input[type='url']:focus,
 select:focus,
 textarea:focus {
   border-color: var(--iom-control-border);
-  --tw-ring-color: rgb(140 140 148 / 0.22);
+  --tw-ring-color: rgb(var(--iom-control-border-rgb) / 0.22);
 }

@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Manrope } from 'next/font/google';
+import { DM_Sans } from 'next/font/google';
 import ClientLayout from "./components/layout/clientlayout";
 import RouteLoader from "./components/RouteLoader";
 
-const manrope = Manrope({
-  weight: ['400', '500', '600', '700', '800'],
+// DM Sans = font kanonik IOM-ITB (lihat iom-tokens.css).
+const dmSans = DM_Sans({
+  weight: ['400', '500', '600', '700'],
   subsets: ['latin'],
-  variable: '--font-manrope',
+  variable: '--font-dm-sans',
 });
 
 export const metadata: Metadata = {
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${manrope.variable} ${manrope.className} antialiased flex flex-col min-h-screen`} suppressHydrationWarning>
+      <body className={`${dmSans.variable} ${dmSans.className} antialiased flex flex-col min-h-screen`} suppressHydrationWarning>
         <RouteLoader />
         <ClientLayout>{children}</ClientLayout>
       </body>

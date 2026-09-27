@@ -55,7 +55,7 @@ function ProfileOta({
   ) {
     return (
       <main className="flex min-h-[calc(100vh-70px)] flex-col items-center justify-center gap-4 p-2 px-6 py-8 md:px-12 lg:min-h-[calc(100vh-96px)]">
-        <Metadata title="Profile | BOTA" />
+        <Metadata title="Profile | OTA-Ku" />
         <UserCog className="text-primary h-24 w-24" />
         <h2 className="text-2xl font-semibold">
           Anda belum melakukan pendaftaran
@@ -66,7 +66,7 @@ function ProfileOta({
 
   return (
     <main className="flex min-h-[calc(100vh-70px)] flex-col p-2 px-6 py-8 md:px-12 lg:min-h-[calc(100vh-96px)]">
-      <Metadata title="Profile | BOTA" />
+      <Metadata title="Profile | OTA-Ku" />
       <p className="text-primary mb-6 text-4xl font-bold">Profile</p>
       <div className="grid gap-6 md:grid-cols-[300px_1fr]">
         <div>

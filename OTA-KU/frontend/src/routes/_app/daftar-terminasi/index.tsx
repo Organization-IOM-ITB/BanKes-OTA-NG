@@ -23,7 +23,7 @@ export const Route = createFileRoute("/_app/daftar-terminasi/")({
 function RouteComponent() {
   return (
     <main className="flex min-h-[calc(100vh-70px)] flex-col gap-4 p-2 px-6 py-16 md:px-12 lg:min-h-[calc(100vh-96px)]">
-      <Metadata title="Daftar Terminasi | BOTA" />
+      <Metadata title="Daftar Terminasi | OTA-Ku" />
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-dark text-3xl font-bold md:text-[50px]">
           Daftar Terminasi OTA

@@ -38,7 +38,7 @@ const adminRoutes = [
   },
   {
     id: "pemasangan-bota",
-    label: "Pemasangan BOTA",
+    label: "Pemasangan OTA-Ku",
     icon: `${iconBase}Type=handshake.svg`,
     path: "/pemasangan-bota",
   },

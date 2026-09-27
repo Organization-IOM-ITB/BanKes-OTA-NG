@@ -13,7 +13,7 @@ export function NotFound() {
       <SidebarProvider>
         <NavBar />
         <main className="flex h-full min-h-[calc(100vh-70px)] w-full items-center justify-center lg:min-h-[calc(100vh-96px)]">
-          <Metadata title="Halaman Tidak Ditemukan | BOTA" />
+          <Metadata title="Halaman Tidak Ditemukan | OTA-Ku" />
 
           <div className="mx-auto flex h-full max-w-md flex-col items-center px-4 text-center">
             <h1 className="text-5xl font-bold tracking-tighter text-primary">

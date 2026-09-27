@@ -23,7 +23,7 @@ export const Route = createFileRoute("/_app/persetujuan-asuh/")({
 function RouteComponent() {
   return (
     <main className="flex min-h-[calc(100vh-70px)] flex-col gap-4 p-2 px-6 py-16 md:px-12 lg:min-h-[calc(100vh-96px)]">
-      <Metadata title="Persetujuan Asuh | BOTA" />
+      <Metadata title="Persetujuan Asuh | OTA-Ku" />
       <h1 className="text-dark text-3xl font-bold md:text-[50px]">
         Persetujuan Asuh
       </h1>

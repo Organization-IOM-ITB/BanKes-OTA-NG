@@ -50,7 +50,7 @@ export const Route = createFileRoute("/_app/status-transaksi/")({
 function RouteComponent() {
   return (
     <main className="flex min-h-[calc(100vh-70px)] flex-col gap-4 p-2 px-6 py-16 md:px-12 lg:min-h-[calc(100vh-96px)]">
-      <Metadata title="Status Transaksi | BOTA" />
+      <Metadata title="Status Transaksi | OTA-Ku" />
       <h1 className="text-dark text-3xl font-bold md:text-[50px]">
         Status Transaksi
       </h1>

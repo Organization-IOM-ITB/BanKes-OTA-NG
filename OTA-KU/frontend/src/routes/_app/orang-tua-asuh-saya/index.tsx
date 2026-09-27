@@ -73,7 +73,7 @@ function RouteComponent() {
 
   return (
     <main className="flex min-h-[calc(100vh-70px)] flex-col items-center p-2 px-6 py-8 md:px-12 lg:min-h-[calc(100vh-96px)]">
-      <Metadata title="Orang Tua Asuh Saya | BOTA" />
+      <Metadata title="Orang Tua Asuh Saya | OTA-Ku" />
       <h1 className="text-primary mb-4 text-2xl font-bold">
         Orang Tua Asuh Saya
       </h1>

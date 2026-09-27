@@ -71,7 +71,7 @@ function RouteComponent() {
 
   return (
     <div className="flex min-h-[calc(100vh-70px)] items-center justify-center">
-      <Metadata title="Login | BOTA" />
+      <Metadata title="Login | OTA-Ku" />
       <div className="flex flex-col items-center gap-4">
         <div className="border-primary h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" />
         <p className="text-primary text-lg">Sedang memproses login SSO...</p>

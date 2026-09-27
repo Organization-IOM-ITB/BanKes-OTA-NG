@@ -89,7 +89,7 @@ function RouteComponent() {
 
   return (
     <main className="flex min-h-[calc(100vh-70px)] flex-col px-4 py-10 sm:px-6 sm:py-16 md:px-12 lg:min-h-[calc(100vh-96px)]">
-      <Metadata title="Login | BOTA" />
+      <Metadata title="Login | OTA-Ku" />
       <div className="flex flex-col items-center gap-6 sm:gap-9">
         <img
           src={`${import.meta.env.BASE_URL}icon/logo-basic.png`}

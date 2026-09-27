@@ -66,7 +66,7 @@ function RouteComponent() {
 
   return (
     <main className="flex min-h-[calc(100vh-70px)] flex-col gap-4 p-2 px-6 py-16 md:px-12 lg:min-h-[calc(100vh-96px)]">
-      <Metadata title="Testimoni Saya | BOTA" />
+      <Metadata title="Testimoni Saya | OTA-Ku" />
       <h1 className="text-dark text-3xl font-bold md:text-[50px]">Testimoni Saya</h1>
       {isPending ? (
         <Skeleton className="h-[320px] w-full rounded-xl" />

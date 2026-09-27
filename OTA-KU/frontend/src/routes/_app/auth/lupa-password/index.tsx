@@ -66,7 +66,7 @@ function RouteComponent() {
 
   return (
     <main className="text-primary flex min-h-[calc(100vh-70px)] flex-col items-center justify-center p-2 px-6 py-8 md:px-12 lg:min-h-[calc(100vh-96px)]">
-      <Metadata title="Lupa Password | BOTA" />
+      <Metadata title="Lupa Password | OTA-Ku" />
       <div className="w-full md:w-3/5 lg:w-1/2">
         <div className="text-center">
           <div className="mb-4 flex justify-center">

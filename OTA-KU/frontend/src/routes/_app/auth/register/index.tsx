@@ -23,7 +23,7 @@ function RouteComponent() {
 
   return (
     <main className="flex min-h-[calc(100vh-70px)] flex-col justify-center p-2 px-6 py-8 md:px-12 lg:min-h-[calc(100vh-96px)]">
-      <Metadata title="Register | BOTA" />
+      <Metadata title="Register | OTA-Ku" />
       <div
         className={cn(
           "flex flex-col items-center gap-9",

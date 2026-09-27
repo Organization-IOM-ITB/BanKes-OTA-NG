@@ -46,7 +46,7 @@ function RouteComponent() {
 
   return (
     <div>
-      <Metadata title="Login | BOTA" />
+      <Metadata title="Login | OTA-Ku" />
       Waiting to redirect
     </div>
   );

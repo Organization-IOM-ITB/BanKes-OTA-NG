@@ -66,7 +66,7 @@ function RouteComponent() {
   if (applicationStatus === "pending") {
     return (
       <main className="flex min-h-[calc(100vh-70px)] flex-col gap-4 p-2 px-6 py-16 md:px-12 lg:min-h-[calc(100vh-96px)]">
-        <Metadata title="Pendaftaran | BOTA" />
+        <Metadata title="Pendaftaran | OTA-Ku" />
         <h1 className="text-primary text-center text-2xl font-bold">
           Anda sudah mendaftar
         </h1>
@@ -90,12 +90,12 @@ function RouteComponent() {
   if (applicationStatus === "rejected") {
     return (
       <main className="flex min-h-[calc(100vh-70px)] flex-col gap-4 p-2 px-6 py-16 md:px-12 lg:min-h-[calc(100vh-96px)]">
-        <Metadata title="Pendaftaran | BOTA" />
+        <Metadata title="Pendaftaran | OTA-Ku" />
         <h1 className="text-primary text-center text-2xl font-bold">
           Maaf, pendaftaran anda ditolak
         </h1>
         <p className="mt-4 text-center text-lg">
-          Maaf pendaftaran anda ditolak oleh pengurus BOTA (admin) karena suatu
+          Maaf pendaftaran anda ditolak oleh pengurus OTA-Ku (admin) karena suatu
           alasan. Jika terdapat kesalahan, silakan hubungi WhatsApp{" "}
           <a
             href="https://wa.me/6285624654990"

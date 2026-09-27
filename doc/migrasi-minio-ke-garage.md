@@ -110,7 +110,9 @@ kredensial diisi, **deploy ulang** agar aplikasi memakainya.
 dijalankan sementara dari image yang masih ada di cache.
 
 ```bash
-NET=$(docker inspect iom-ota-garage-prod \
+# Nama container dibuat Coolify, jadi diambil dinamis (lihat catatan di langkah 3).
+GC=$(docker ps --format '{{.Names}}' | grep ^garage- | head -1)
+NET=$(docker inspect "$GC" \
        -f '{{range $k,$v := .NetworkSettings.Networks}}{{$k}} {{end}}' | tr ' ' '\n' | grep iom-ota)
 
 docker run -d --name minio-old --network "$NET" \

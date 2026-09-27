@@ -42,8 +42,14 @@ sehingga URL lama tetap valid tanpa mengubah data.
 docker save quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z | gzip > ~/minio-image-backup.tar.gz
 
 # Cadangkan volume data lama
-docker run --rm -v qwnssdwthwl9j0ymwaxvhz92_minio-data:/data -v ~:/backup \
+# Direktori backup ditulis absolut, bukan `~`. Saat dijalankan sebagai root
+# dari /home/madzul, `~` mengembang ke /root sehingga file-nya seolah tidak
+# terbuat padahal ada di tempat lain.
+BACKUP_DIR=/root
+docker run --rm -v qwnssdwthwl9j0ymwaxvhz92_minio-data:/data -v "$BACKUP_DIR":/backup \
   alpine tar czf /backup/minio-data-backup.tar.gz -C /data .
+
+ls -lh "$BACKUP_DIR/minio-data-backup.tar.gz"   # pastikan ukurannya wajar
 ```
 
 Jangan hapus volume `minio-data` sampai verifikasi di langkah 6 lulus.

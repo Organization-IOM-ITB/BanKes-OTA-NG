@@ -1,5 +1,13 @@
+# OTA-Ku — https://bankes.iom-itb.id/ota
+# Sebagian besar halaman berada di balik autentikasi, jadi tidak ada
+# direktif Disallow khusus: yang tidak bisa diakses anonim memang tidak
+# akan terindeks.
+#
+# Baris "Sitemap:" sengaja dihilangkan. Sebelumnya menunjuk
+# https://bota.iom-itb.com/sitemap.xml (domain salah, TLD salah), dan
+# berkas sitemap-nya sendiri belum pernah dibuat — permintaan ke
+# /ota/sitemap.xml dijawab index.html oleh SPA fallback, sehingga crawler
+# akan gagal mem-parsing-nya. Tambahkan kembali setelah sitemap asli ada.
+
 User-Agent: *
 Allow: /
-Disallow: 
-// TODO: Change to the correct url, also add sitemap
-Sitemap: https://bota.iom-itb.com/sitemap.xml

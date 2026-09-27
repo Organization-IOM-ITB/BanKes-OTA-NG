@@ -151,6 +151,23 @@ Simpan `minio-data-backup.tar.gz` beberapa waktu sebagai jaring pengaman.
 
 ---
 
+## Kenapa konfigurasi dibawa lewat build, bukan bind mount
+
+Percobaan pertama memakai `- ./garage/garage.toml:/etc/garage.toml:ro` dan
+**gagal**: Garage crash-loop dengan `Error: IO error: Is a directory
+(os error 21)`.
+
+Sebabnya, Coolify menjalankan `docker compose` **di dalam container
+helper**, sementara bind mount diselesaikan oleh **Docker daemon di host**.
+Path `/artifacts/<id>/` tidak ada di host, sehingga Docker membuat
+direktori kosong di posisi berkas konfigurasi. Build context tidak kena
+masalah ini karena dikirim sebagai tar dari helper — itulah sebabnya
+`context: ./bankes_IOM-ITB` dkk berjalan normal.
+
+Karena itu `garage/Dockerfile` hanya berisi `FROM` + `COPY garage.toml`,
+dan service `garage` memakai `build:` seperti service lain. **Jangan
+kembalikan ke bind mount berkas repo** — di setup ini pasti gagal.
+
 ## Bagian yang belum bisa diuji dari luar
 
 Jujur soal batas verifikasi — hal berikut baru ketahuan saat dijalankan:

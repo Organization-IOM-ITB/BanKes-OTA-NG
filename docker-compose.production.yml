@@ -41,14 +41,15 @@ services:
     # Pengganti MinIO. MinIO menutup distribusi publik image maupun binernya
     # (lihat doc/migrasi-minio-ke-garage.md); Garage S3-compatible, AGPL,
     # image-nya bisa ditarik dan di-pin.
-    image: dxflrs/garage:v2.1.0
+    build:
+      context: ./garage
+      dockerfile: Dockerfile
     container_name: iom-ota-garage-prod
     environment:
       # Rahasia lewat env, tidak ditaruh di garage.toml.
       GARAGE_RPC_SECRET: ${GARAGE_RPC_SECRET}
       GARAGE_ADMIN_TOKEN: ${GARAGE_ADMIN_TOKEN}
     volumes:
-      - ./garage/garage.toml:/etc/garage.toml:ro
       - garage-meta:/var/lib/garage/meta
       - garage-data:/var/lib/garage/data
     # SENGAJA TANPA healthcheck. Garage perlu bootstrap layout manual sekali

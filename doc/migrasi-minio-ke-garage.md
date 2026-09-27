@@ -69,8 +69,22 @@ Garage akan hidup tapi belum melayani apa pun sampai layout di-apply.
 
 ## 3. Bootstrap Garage (sekali saja)
 
+> **Dua jebakan pada perintah di bawah**, keduanya sudah dikoreksi di sini:
+> 1. Biner Garage ada di **`/garage`** (root filesystem) dan `PATH` image
+>    tidak memuat `/`. Menulis `garage` saja gagal dengan
+>    `executable file not found in $PATH`. Harus `/garage`.
+> 2. **Coolify mengabaikan `container_name:`** di compose dan memakai
+>    namanya sendiri (`garage-<uuid>-<angka>`). Ambil nama aslinya dengan:
+>    `docker ps --format '{{.Names}}' | grep ^garage-`
+>
+> ```bash
+> GC=$(docker ps --format '{{.Names}}' | grep ^garage- | head -1)
+> G="docker exec -it $GC /garage"
+> ```
+
 ```bash
-G="docker exec -it iom-ota-garage-prod garage"
+GC=$(docker ps --format '{{.Names}}' | grep ^garage- | head -1)
+G="docker exec -it $GC /garage"
 
 $G status                       # catat Node ID yang muncul
 $G layout assign -z dc1 -c 50G <NODE_ID>

@@ -1,0 +1,38 @@
+# Garage — object storage pengganti MinIO (lihat doc/migrasi-minio-ke-garage.md)
+#
+# RAHASIA TIDAK DITARUH DI SINI. rpc_secret dan admin_token diisi lewat
+# environment variable GARAGE_RPC_SECRET dan GARAGE_ADMIN_TOKEN, yang
+# didukung resmi sejak v0.8.5 — lihat compose service `garage`.
+
+metadata_dir = "/var/lib/garage/meta"
+data_dir     = "/var/lib/garage/data"
+
+# lmdb = default yang direkomendasikan untuk produksi (alternatif: sqlite, fjall)
+db_engine = "lmdb"
+
+# Satu node, tanpa replikasi antar-mesin. Ketahanan data bertumpu pada
+# backup volume, sama seperti MinIO sebelumnya.
+replication_factor = 1
+
+rpc_bind_addr   = "[::]:3901"
+rpc_public_addr = "127.0.0.1:3901"
+
+[s3_api]
+# Sengaja "us-east-1", bukan "garage": itu region default yang diasumsikan
+# hampir semua klien S3, sehingga minio@8 (OTA-KU & bankes) dan
+# @aws-sdk/client-s3 (moki) tidak perlu diubah sama sekali.
+s3_region     = "us-east-1"
+api_bind_addr = "[::]:3900"
+# Dipakai untuk vhost-style (bucket.s3.garage.internal). Akses dari aplikasi
+# memakai path-style ke http://garage:3900, jadi nilai ini tidak kritis.
+root_domain   = ".s3.garage.internal"
+
+[s3_web]
+# Endpoint penyajian publik — padanan `mc anonymous set public` di MinIO.
+# Bucket dikenali dari Host header, BUKAN dari path (beda dengan MinIO).
+bind_addr   = "[::]:3902"
+root_domain = ".web.garage.internal"
+index       = "index.html"
+
+[admin]
+api_bind_addr = "[::]:3903"

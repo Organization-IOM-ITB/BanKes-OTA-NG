@@ -36,24 +36,28 @@ services:
         aliases:
           - iom-ota-db
 
-  # ── MinIO Object Storage ─────────────────────────────────────────────────────
-  minio:
-    image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
-    container_name: iom-ota-minio-prod
-    ports:
-      - "${MINIO_API_PORT:-19000}:9000"
-      - "${MINIO_CONSOLE_PORT:-19001}:9001"
+  # ── Garage Object Storage (pengganti MinIO) ──────────────────────────────────────────────────────────────────────────────────────
+  garage:
+    # Pengganti MinIO. MinIO menutup distribusi publik image maupun binernya
+    # (lihat doc/migrasi-minio-ke-garage.md); Garage S3-compatible, AGPL,
+    # image-nya bisa ditarik dan di-pin.
+    image: dxflrs/garage:v2.1.0
+    container_name: iom-ota-garage-prod
     environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      # Rahasia lewat env, tidak ditaruh di garage.toml.
+      GARAGE_RPC_SECRET: ${GARAGE_RPC_SECRET}
+      GARAGE_ADMIN_TOKEN: ${GARAGE_ADMIN_TOKEN}
     volumes:
-      - minio-data:/data
-    command: server /data --console-address ":9001"
+      - ./garage/garage.toml:/etc/garage.toml:ro
+      - garage-meta:/var/lib/garage/meta
+      - garage-data:/var/lib/garage/data
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      # Endpoint health Garage pada admin API.
+      test: ["CMD", "garage", "status"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 20s
     restart: unless-stopped
     networks:
       - iom-ota-network
@@ -61,33 +65,20 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=coolify"
-      - "traefik.http.routers.minio-static.rule=Host(`bankes.iom-itb.id`) && PathPrefix(`/minio-static`)"
-      - "traefik.http.routers.minio-static.entrypoints=websecure"
-      - "traefik.http.routers.minio-static.tls=true"
-      - "traefik.http.routers.minio-static.priority=100"
-      - "traefik.http.middlewares.minio-stripprefix.stripprefix.prefixes=/minio-static"
-      - "traefik.http.routers.minio-static.middlewares=minio-stripprefix@docker"
-      - "traefik.http.services.minio-static.loadbalancer.server.port=9000"
+      # URL publik LAMA dipertahankan persis: .../minio-static/<bucket>/<key>
+      # Prefix "/minio-static/<bucket>" di-strip seluruhnya sehingga Garage
+      # menerima "/<key>", dan bucket disampaikan lewat Host header — karena
+      # endpoint web Garage mengenali bucket dari Host, bukan dari path.
+      - "traefik.http.routers.garage-static.rule=Host(`bankes.iom-itb.id`) && PathPrefix(`/minio-static/${MINIO_BUCKET_NAME}`)"
+      - "traefik.http.routers.garage-static.entrypoints=websecure"
+      - "traefik.http.routers.garage-static.tls=true"
+      - "traefik.http.routers.garage-static.priority=100"
+      - "traefik.http.middlewares.garage-strip.stripprefix.prefixes=/minio-static/${MINIO_BUCKET_NAME}"
+      - "traefik.http.middlewares.garage-host.headers.customrequestheaders.Host=${MINIO_BUCKET_NAME}"
+      - "traefik.http.routers.garage-static.middlewares=garage-strip@docker,garage-host@docker"
+      - "traefik.http.services.garage-static.loadbalancer.server.port=3902"
 
-  # ── MinIO bucket init ────────────────────────────────────────────────────────
-  minio-init:
-    image: quay.io/minio/mc:RELEASE.2025-08-13T08-35-41Z
-    container_name: iom-ota-minio-init-prod
-    depends_on:
-      minio:
-        condition: service_healthy
-    networks:
-      - iom-ota-network
-    entrypoint: >
-      /bin/sh -c "
-        mc alias set myminio http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
-        mc mb --ignore-existing myminio/${MINIO_BUCKET_NAME};
-        mc anonymous set public myminio/${MINIO_BUCKET_NAME};
-        echo 'MinIO bucket ready';
-      "
-    restart: "no"
 
-  # ── Schema migration (runs once, no test seed) ───────────────────────────────
   migrate:
     build:
       context: ./prisma
@@ -118,11 +109,11 @@ services:
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
       NEXTAUTH_URL: ${NEXTAUTH_URL}
       NEXT_PUBLIC_NEXTAUTH_URL: ${NEXTAUTH_URL}
-      MINIO_ENDPOINT: minio
-      MINIO_PORT: "9000"
+      MINIO_ENDPOINT: garage
+      MINIO_PORT: "3900"
       MINIO_USE_SSL: "false"
-      MINIO_ACCESS_KEY: ${MINIO_ROOT_USER}
-      MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
+      MINIO_ACCESS_KEY: ${S3_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${S3_SECRET_KEY}
       MINIO_BUCKET_NAME: ${MINIO_BUCKET_NAME}
       MINIO_PUBLIC_URL: ${MINIO_PUBLIC_URL}
       AZURE_AD_CLIENT_ID: ${AZURE_AD_CLIENT_ID:-}
@@ -150,7 +141,7 @@ services:
     depends_on:
       migrate:
         condition: service_completed_successfully
-      minio:
+      garage:
         condition: service_healthy
     networks:
       - iom-ota-network
@@ -176,11 +167,11 @@ services:
       CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:-placeholder}
       CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:-placeholder}
       CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:-placeholder}
-      MINIO_ENDPOINT: minio
-      MINIO_PORT: "9000"
+      MINIO_ENDPOINT: garage
+      MINIO_PORT: "3900"
       MINIO_USE_SSL: "false"
-      MINIO_ACCESS_KEY: ${MINIO_ROOT_USER}
-      MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
+      MINIO_ACCESS_KEY: ${S3_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${S3_SECRET_KEY}
       MINIO_BUCKET_NAME: ${MINIO_BUCKET_NAME}
       MINIO_PUBLIC_HOST: ${SERVER_IP}
       MINIO_PUBLIC_PORT: ${MINIO_API_PORT:-19000}
@@ -210,7 +201,7 @@ services:
     depends_on:
       migrate:
         condition: service_completed_successfully
-      minio:
+      garage:
         condition: service_healthy
     networks:
       - iom-ota-network
@@ -254,7 +245,8 @@ services:
 # ── Volumes ───────────────────────────────────────────────────────────────────
 volumes:
   postgres-data:
-  minio-data:
+  garage-meta:
+  garage-data:
 
 # ── Networks ──────────────────────────────────────────────────────────────────
 networks:

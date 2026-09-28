@@ -5,4 +5,5 @@ interface ImportMetaEnv {
   readonly VITE_KEYCLOAK_CLIENT_ID: string;
   readonly VITE_KEYCLOAK_REDIRECT_URI: string;
   readonly VITE_IOM_APP_URL?: string;
+  readonly VITE_APP_SELECTOR_URL?: string;
 }

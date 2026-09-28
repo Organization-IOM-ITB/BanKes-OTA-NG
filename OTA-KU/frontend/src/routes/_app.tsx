@@ -1,3 +1,4 @@
+import AppSelectorFab from "@/components/app-selector-fab";
 import NavBar from "@/components/navbar";
 import SessionProvider from "@/components/session";
 import { SidebarProvider } from "@/context/sidebar";
@@ -71,6 +72,7 @@ function AppLayout() {
         <SidebarLayout>
           <Outlet />
         </SidebarLayout>
+        <AppSelectorFab />
       </SidebarProvider>
     </SessionProvider>
   );

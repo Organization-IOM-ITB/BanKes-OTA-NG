@@ -69,16 +69,20 @@ services:
       # Prefix "/minio-static/<bucket>" di-strip seluruhnya sehingga Garage
       # menerima "/<key>", dan bucket disampaikan lewat Host header — karena
       # endpoint web Garage mengenali bucket dari Host, bukan dari path.
-      - "traefik.http.routers.garage-static.rule=Host(`bankes.iom-itb.id`) && PathPrefix(`/minio-static/${MINIO_BUCKET_NAME}`)"
+      # Nama bucket DITULIS LANGSUNG: Coolify tidak mengisi ${VAR} di dalam label
+      # (rule di container tetap berbunyi literal "${MINIO_BUCKET_NAME}"). Harus
+      # sama dengan env MINIO_BUCKET_NAME dan bucket Garage (`garage bucket list`).
+      - "traefik.http.routers.garage-static.rule=Host(`bankes.iom-itb.id`) && PathPrefix(`/minio-static/documents-bucket`)"
       # Entrypoint proxy Coolify bernama "http"/"https" — bukan "websecure".
       # Dengan "websecure" Traefik menolak router ini ("EntryPoint doesn't exist")
       # dan request jatuh ke aplikasi bankes (404 Next.js).
       - "traefik.http.routers.garage-static.entrypoints=https"
       - "traefik.http.routers.garage-static.tls=true"
       - "traefik.http.routers.garage-static.priority=100"
-      - "traefik.http.middlewares.garage-strip.stripprefix.prefixes=/minio-static/${MINIO_BUCKET_NAME}"
-      - "traefik.http.middlewares.garage-host.headers.customrequestheaders.Host=${MINIO_BUCKET_NAME}"
+      - "traefik.http.middlewares.garage-strip.stripprefix.prefixes=/minio-static/documents-bucket"
+      - "traefik.http.middlewares.garage-host.headers.customrequestheaders.Host=documents-bucket"
       - "traefik.http.routers.garage-static.middlewares=garage-strip@docker,garage-host@docker"
+      - "traefik.http.routers.garage-static.service=garage-static"
       - "traefik.http.services.garage-static.loadbalancer.server.port=3902"
 
 
@@ -220,6 +224,11 @@ services:
       - "traefik.http.routers.ota-backend.priority=10"
       - "traefik.http.middlewares.ota-api-strip.stripprefix.prefixes=/ota-api"
       - "traefik.http.routers.ota-backend.middlewares=ota-api-strip@docker"
+      # Container ini juga punya service buatan Coolify (domain /ota-api), jadi
+      # router harus menyebut service-nya — kalau tidak: "cannot be linked
+      # automatically with multiple Services". Router Coolify tetap menang
+      # (priority 10 < panjang rule-nya), ini hanya cadangan.
+      - "traefik.http.routers.ota-backend.service=ota-backend"
       - "traefik.http.services.ota-backend.loadbalancer.server.port=3000"
     restart: unless-stopped
 

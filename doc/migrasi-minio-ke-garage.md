@@ -208,6 +208,15 @@ sejak sebelum migrasi. Diperbaiki menjadi `entrypoints=https` (juga untuk
 `ota-backend`, yang selama ini tetap jalan karena didukung router buatan
 Coolify dari domain-nya).
 
+**Lapis kedua (ketahuan setelah entrypoint diperbaiki):** Coolify tidak
+mengisi `${MINIO_BUCKET_NAME}` di dalam label. `docker inspect` container garage
+menunjukkan rule literal ``PathPrefix(`/minio-static/${MINIO_BUCKET_NAME}`)``,
+begitu pula strip-prefix dan header Host. Nama bucket kini ditulis langsung
+(`documents-bucket`) — harus sama dengan env `MINIO_BUCKET_NAME` dan
+`garage bucket list`. Router `ota-backend` diberi `service=ota-backend` karena
+setelah aktif ia bertabrakan dengan service buatan Coolify ("cannot be linked
+automatically with multiple Services").
+
 Verifikasi setelah deploy — balasan harus `application/xml` (dari Garage),
 bukan `text/html`:
 

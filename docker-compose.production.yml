@@ -70,7 +70,10 @@ services:
       # menerima "/<key>", dan bucket disampaikan lewat Host header — karena
       # endpoint web Garage mengenali bucket dari Host, bukan dari path.
       - "traefik.http.routers.garage-static.rule=Host(`bankes.iom-itb.id`) && PathPrefix(`/minio-static/${MINIO_BUCKET_NAME}`)"
-      - "traefik.http.routers.garage-static.entrypoints=websecure"
+      # Entrypoint proxy Coolify bernama "http"/"https" — bukan "websecure".
+      # Dengan "websecure" Traefik menolak router ini ("EntryPoint doesn't exist")
+      # dan request jatuh ke aplikasi bankes (404 Next.js).
+      - "traefik.http.routers.garage-static.entrypoints=https"
       - "traefik.http.routers.garage-static.tls=true"
       - "traefik.http.routers.garage-static.priority=100"
       - "traefik.http.middlewares.garage-strip.stripprefix.prefixes=/minio-static/${MINIO_BUCKET_NAME}"
@@ -212,7 +215,7 @@ services:
       - "traefik.enable=true"
       - "traefik.docker.network=coolify"
       - "traefik.http.routers.ota-backend.rule=Host(`bankes.iom-itb.id`) && PathPrefix(`/ota-api`)"
-      - "traefik.http.routers.ota-backend.entrypoints=websecure"
+      - "traefik.http.routers.ota-backend.entrypoints=https"
       - "traefik.http.routers.ota-backend.tls=true"
       - "traefik.http.routers.ota-backend.priority=10"
       - "traefik.http.middlewares.ota-api-strip.stripprefix.prefixes=/ota-api"

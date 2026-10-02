@@ -190,6 +190,32 @@ Karena itu `garage/Dockerfile` hanya berisi `FROM` + `COPY garage.toml`,
 dan service `garage` memakai `build:` seperti service lain. **Jangan
 kembalikan ke bind mount berkas repo** — di setup ini pasti gagal.
 
+## Temuan 2026-10-02: rute `/minio-static/` tidak pernah aktif
+
+Bootstrap Garage terverifikasi sehat (layout v1, bucket `documents-bucket`,
+key `iom-app`), tetapi `https://bankes.iom-itb.id/minio-static/<bucket>/...`
+dijawab 404 HTML Next.js milik aplikasi bankes. Log `coolify-proxy`:
+
+```
+ERR EntryPoint doesn't exist entryPointName=websecure routerName=garage-static@docker
+ERR No valid entryPoint for this router routerName=garage-static@docker
+```
+
+Proxy Coolify hanya punya entrypoint `http` dan `https`. Label
+`entrypoints=websecure` — sudah dipakai sejak rute MinIO lama — membuat
+Traefik membuang router ini, jadi tautan file publik kemungkinan sudah putus
+sejak sebelum migrasi. Diperbaiki menjadi `entrypoints=https` (juga untuk
+`ota-backend`, yang selama ini tetap jalan karena didukung router buatan
+Coolify dari domain-nya).
+
+Verifikasi setelah deploy — balasan harus `application/xml` (dari Garage),
+bukan `text/html`:
+
+```bash
+curl -s -o /dev/null -w '%{http_code} %{content_type}\n' \
+  "https://bankes.iom-itb.id/minio-static/documents-bucket/__cek-tidak-ada__.txt"
+```
+
 ## Bagian yang belum bisa diuji dari luar
 
 Jujur soal batas verifikasi — hal berikut baru ketahuan saat dijalankan:

@@ -217,8 +217,10 @@ begitu pula strip-prefix dan header Host. Nama bucket kini ditulis langsung
 setelah aktif ia bertabrakan dengan service buatan Coolify ("cannot be linked
 automatically with multiple Services").
 
-Verifikasi setelah deploy — balasan harus `application/xml` (dari Garage),
-bukan `text/html`:
+Verifikasi setelah deploy — Garage membalas halaman error HTML berisi
+`Code: NoSuchKey` (bucket ketemu, key memang tidak ada). Kalau isinya halaman
+Next.js bankes, rute belum aktif; kalau `NoSuchBucket`, header Host salah.
+Terverifikasi 2026-10-02 14:42 UTC (commit `6c6ced1`):
 
 ```bash
 curl -s -o /dev/null -w '%{http_code} %{content_type}\n' \

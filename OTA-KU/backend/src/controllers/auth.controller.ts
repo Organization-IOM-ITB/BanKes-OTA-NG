@@ -1,4 +1,4 @@
-import { compare, hash } from "bcrypt";
+import { hash } from "bcrypt";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import { decode, sign } from "hono/jwt";
 import nodemailer from "nodemailer";
@@ -12,6 +12,7 @@ import {
   getNimFakultasFromNimJurusanMap,
   getNimJurusanCodeMap,
 } from "../lib/nim.js";
+import { verifyLoginPassword } from "../lib/login-password.js";
 import { generateOTP, sendOtpEmail } from "../lib/otp.js";
 import { generateSecurePassword } from "../lib/password.js";
 import {
@@ -87,38 +88,34 @@ authRouter.openapi(loginRoute, async (c) => {
       orderBy: { expiredAt: "desc" },
     });
 
-    if (
-      foundAccount.provider === "credentials" &&
-      temporaryPassword
-    ) {
-      const tempPass = temporaryPassword.password;
-      const isTempPassValid = await compare(password, tempPass);
+    const passwordMatch = await verifyLoginPassword({
+      password,
+      provider: foundAccount.provider,
+      passwordHash: foundAccount.password,
+      temporaryPasswordHash: temporaryPassword?.password,
+    });
 
-      if (isTempPassValid) {
-        // Mark the temporary password as used
-        await prisma.temporaryPassword.updateMany({
-          where: {
-            userId: temporaryPassword.userId,
-            password: tempPass,
-          },
-          data: { used: true },
-        });
-      }
-    } else {
-      // Check the password hash
-      const isPasswordValid = await compare(password, foundAccount.password!);
+    if (!passwordMatch) {
+      console.error("Invalid password");
+      return c.json(
+        {
+          success: false,
+          message: "Invalid credentials",
+          error: "Invalid email or password",
+        },
+        401,
+      );
+    }
 
-      if (!isPasswordValid) {
-        console.error("Invalid password");
-        return c.json(
-          {
-            success: false,
-            message: "Invalid credentials",
-            error: "Invalid email or password",
-          },
-          401,
-        );
-      }
+    if (passwordMatch === "temporary" && temporaryPassword) {
+      // Mark the temporary password as used
+      await prisma.temporaryPassword.updateMany({
+        where: {
+          userId: temporaryPassword.userId,
+          password: temporaryPassword.password,
+        },
+        data: { used: true },
+      });
     }
 
     const accountId = foundAccount.id;
